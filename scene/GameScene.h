@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include"DebugCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -44,6 +45,32 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	//テクスチャハンドル
+	uint32_t textureHandle_ = 0; 
+	// スプライト
+	Sprite* sprite_ = nullptr;
+	//3Dモデル
+	Model* model_ = nullptr;
+	//ワールドトランスフォーム
+	WorldTransform worldTransform_;
+    // ビュープロジェクション
+    ViewProjection viewProjection_;
+
+	//サウンドデータハンドル
+	uint32_t soundDateHandle_ = 0;
+	//音声生成ハンドル
+	uint32_t voiceHandle_ = 0;
+
+	//ImGuiで値を入力する変数
+	float inputFloat3[3] = {0, 0, 0};
+
+	//デバッグカメラ
+	DebugCamera* debugCamera_ = nullptr;
+
+	//球に使用する予定だった
+	/*Vector3 circlePosition[4][65] = {};
+	float radius = 15;*/
 
 	/// <summary>
 	/// ゲームシーン用

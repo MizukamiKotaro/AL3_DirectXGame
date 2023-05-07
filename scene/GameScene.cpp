@@ -1,12 +1,15 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include "WinApp.h"
+#include "AxisIndicator.h"
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete model_;
 	delete player_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -25,9 +28,36 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
+
+	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
+
+	AxisIndicator::GetInstance()->SetVisible(true);
+
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 }
 
-void GameScene::Update() { player_->Update(); }
+void GameScene::Update() {
+	player_->Update();
+	debugCamera_->Update();
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_LSHIFT)) {
+		if (isDebugCameraActive_) {
+			isDebugCameraActive_ = false;
+		} else {
+			isDebugCameraActive_ = true;
+		}
+	}
+#endif // _DEBUG
+	if (isDebugCameraActive_) {
+		debugCamera_->Update();
+		ViewProjection tmp = debugCamera_->GetViewProjection();
+		viewProjection_.matView = tmp.matView;
+		viewProjection_.matProjection = tmp.matProjection;
+		viewProjection_.TransferMatrix();
+	} else {
+		viewProjection_.UpdateMatrix();
+	}
+}
 
 void GameScene::Draw() {
 

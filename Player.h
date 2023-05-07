@@ -4,6 +4,7 @@
 #include "ViewProjection.h"
 #include "Input.h"
 #include "Vector3.h"
+#include "PlayerBullet.h"
 
 class Player {
 public:
@@ -27,6 +28,10 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
 	void Draw(ViewProjection& viewProjection);
 
+	void Rotate();
+
+	void Attack();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -37,4 +42,5 @@ private:
 	//キーボード入力
 	Input* input_ = nullptr;
 
+	PlayerBullet* bullet_ = nullptr;
 };

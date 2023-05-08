@@ -5,10 +5,12 @@
 #include "Input.h"
 #include "Vector3.h"
 #include "PlayerBullet.h"
+#include <list>
 
 class Player {
 public:
 	
+	~Player();
 
 	/// <summary>
 	/// 初期化
@@ -42,5 +44,5 @@ private:
 	//キーボード入力
 	Input* input_ = nullptr;
 
-	PlayerBullet* bullet_ = nullptr;
+	std::list<PlayerBullet*> bullets_;
 };

@@ -26,6 +26,17 @@ public:
 	
 
 private:
+
+	enum class Phase {
+		Approach, // 接近する
+		Leave,    // 離脱する
+	};
+
+	void ApproachPhaseUpdate(const float& moveSpeed);
+
+	void LeavePhaseUpdate(const float& moveSpeed);
+
+private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
@@ -33,4 +44,5 @@ private:
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	
+	Phase phase_ = Phase::Approach;
 };

@@ -10,6 +10,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 	delete debugCamera_;
+	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -18,7 +19,9 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle_ = TextureManager::Load("mario.jpg");
+	playerTextureHandle_ = TextureManager::Load("nikoniko.png");
+
+	enemyTextureHandle_ = TextureManager::Load("eye.png");
 
 	model_ = Model::Create();
 
@@ -27,7 +30,11 @@ void GameScene::Initialize() {
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	player_->Initialize(model_, playerTextureHandle_);
+
+	enemy_ = new Enemy();
+
+	enemy_->Initialize(model_, enemyTextureHandle_);
 
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
@@ -38,6 +45,7 @@ void GameScene::Initialize() {
 
 void GameScene::Update() {
 	player_->Update();
+	enemy_->Update();
 	debugCamera_->Update();
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_LSHIFT)) {
@@ -85,7 +93,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	
+	enemy_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理

@@ -55,6 +55,9 @@
     <Filter Include="Player">
       <UniqueIdentifier>{246b2e2a-eb0a-435b-b625-a124190b6370}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Enemy">
+      <UniqueIdentifier>{fadb5bba-e72e-4642-a0dd-4b581b856825}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

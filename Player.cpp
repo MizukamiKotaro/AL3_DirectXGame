@@ -33,9 +33,13 @@ void Player::Rotate() {
 void Player::Attack() {
 	if (input_->TriggerKey(DIK_SPACE)) {
 
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+
+		velocity = Matrix4x4::Transform(velocity, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
 
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
 
 		bullets_.push_back(newBullet);
 	}
@@ -75,6 +79,14 @@ void Player::Update() {
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 	worldTransform_.UpdateMatrix();
+
+	bullets_.remove_if([](PlayerBullet* bullet) { 
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
 
 	Attack();
 

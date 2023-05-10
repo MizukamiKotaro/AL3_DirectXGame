@@ -2,6 +2,12 @@
 #include <cassert>
 #include "ImGuiManager.h"
 
+Enemy::~Enemy() {
+	for (EnemyBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
 	model_ = model;
@@ -9,7 +15,14 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
-	worldTransform_.translation_ = {0, 5.0f, 25.0f};
+	worldTransform_.translation_ = {5.0f, 0.0f, 25.0f};
+
+	ApproachPhaseInitialize();
+}
+
+void Enemy::ApproachPhaseInitialize() { 
+	//発射タイマーの初期化
+	fireTimer = kFireInterval;
 }
 
 void Enemy::ApproachPhaseUpdate(const float& moveSpeed) {
@@ -17,9 +30,9 @@ void Enemy::ApproachPhaseUpdate(const float& moveSpeed) {
 
 	worldTransform_.translation_ += velocity;
 
-	if (worldTransform_.translation_.z < 0.0f) {
+	/*if (worldTransform_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;
-	}
+	}*/
 }
 
 void Enemy::LeavePhaseUpdate(const float& moveSpeed) {
@@ -29,11 +42,24 @@ void Enemy::LeavePhaseUpdate(const float& moveSpeed) {
 
 }
 
+void Enemy::Fire() {
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity(0, 0, -kBulletSpeed);
+
+	velocity =
+	    Matrix4x4::Transform(velocity, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
+
+	EnemyBullet* newBullet = new EnemyBullet();
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+	bullets_.push_back(newBullet);
+}
+
 void Enemy::Update() { 
 	
 	const float kMoveSpeed = 0.2f;
 
-	switch (phase_) { 
+	/*switch (phase_) { 
 	case Phase::Approach:
 	default:
 		ApproachPhaseUpdate(kMoveSpeed);
@@ -41,20 +67,19 @@ void Enemy::Update() {
 	case Phase::Leave:
 		LeavePhaseUpdate(kMoveSpeed);
 		break;
+	}*/
+
+	ApproachPhaseUpdate(kMoveSpeed);
+
+	fireTimer--;
+	if (fireTimer == 0) {
+		Fire();
+		fireTimer = kFireInterval;
 	}
 
-	float inputFloat3[3] = {
-	    worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z};
-
-	ImGui::Begin("Enemy");
-	ImGui::InputFloat3("EnemyPos", inputFloat3);
-	if (phase_ == Phase::Approach) {
-		ImGui::Text("Phase : Approach");
-	} else {
-		ImGui::Text("Phase : Leave");
+	for (EnemyBullet* bullet : bullets_) {
+		bullet->Update();
 	}
-	ImGui::End();
 
 	worldTransform_.TransferMatrix();
 	worldTransform_.UpdateMatrix();
@@ -62,4 +87,8 @@ void Enemy::Update() {
 
 void Enemy::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+
+	for (EnemyBullet* bullet : bullets_) {
+		bullet->Draw(viewProjection);
+	}
 }

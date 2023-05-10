@@ -2,9 +2,14 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "EnemyBullet.h"
+#include <list>
 
 class Enemy {
 public:
+
+	~Enemy();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -23,7 +28,7 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
 	void Draw(ViewProjection& viewProjection);
 
-	
+	void Fire();
 
 private:
 
@@ -31,8 +36,11 @@ private:
 		Approach, // 接近する
 		Leave,    // 離脱する
 	};
+	void ApproachPhaseInitialize();
 
 	void ApproachPhaseUpdate(const float& moveSpeed);
+
+	//void LeavePhaseInitialize();
 
 	void LeavePhaseUpdate(const float& moveSpeed);
 
@@ -45,4 +53,11 @@ private:
 	uint32_t textureHandle_ = 0u;
 	
 	Phase phase_ = Phase::Approach;
+
+	std::list<EnemyBullet*> bullets_;
+
+	// 発射間隔
+	static const int kFireInterval = 60;
+
+	int32_t fireTimer = 0;
 };

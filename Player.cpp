@@ -94,18 +94,18 @@ void Player::Update() {
 		bullet->Update();
 	}
 
-	float inputFloat3[3] = {
-	    worldTransform_.translation_.x, worldTransform_.translation_.y,
-	    worldTransform_.translation_.z};
+	//float inputFloat3[3] = {
+	//    worldTransform_.translation_.x, worldTransform_.translation_.y,
+	//    worldTransform_.translation_.z};
 
-	ImGui::Begin("PlayerPosition");
-	//ImGui::InputFloat3("PlayerPosition", inputFloat3);
-	ImGui::SliderFloat3("PlayerPosition", inputFloat3, -35.0f, 35.0f);
-	ImGui::End();
+	//ImGui::Begin("PlayerPosition");
+	////ImGui::InputFloat3("PlayerPosition", inputFloat3);
+	//ImGui::SliderFloat3("PlayerPosition", inputFloat3, -35.0f, 35.0f);
+	//ImGui::End();
 
-	worldTransform_.translation_.x = inputFloat3[0];
-	worldTransform_.translation_.y = inputFloat3[1];
-	worldTransform_.translation_.z = inputFloat3[2];
+	//worldTransform_.translation_.x = inputFloat3[0];
+	//worldTransform_.translation_.y = inputFloat3[1];
+	//worldTransform_.translation_.z = inputFloat3[2];
 }
 
 void Player::Draw(ViewProjection& viewProjection) {

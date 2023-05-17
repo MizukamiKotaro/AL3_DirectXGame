@@ -23,3 +23,5 @@ Vector3 Calc::Normalize(const Vector3& vector) {
 
 	return result;
 }
+
+

@@ -2,6 +2,8 @@
 #include <cassert>
 #include "Matrix4x4.h"
 #include "ImGuiManager.h"
+#include <cmath>
+#include <iostream>
 
 void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& velcity) {
 	assert(model);
@@ -11,6 +13,12 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	worldTransform_.Initialize();
 
 	worldTransform_.translation_ = position;
+
+	worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
+
+	worldTransform_.rotation_.y = std::atan2(velcity.x, velcity.z);
+
+	worldTransform_.rotation_.x = std::atan2(-velcity.y, velcity.z);
 
 	velocity_ = velcity;
 }

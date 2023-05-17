@@ -43,6 +43,8 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	bool IsStart() { return isStart_; }
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -63,6 +65,8 @@ private: // メンバ変数
 	DebugCamera* debugCamera_ = nullptr;
 
 	Enemy* enemy_ = nullptr;
+
+	bool isStart_ = false;
 
 	/// <summary>
 	/// ゲームシーン用

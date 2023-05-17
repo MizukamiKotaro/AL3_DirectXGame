@@ -77,6 +77,14 @@ void Enemy::Update() {
 		fireTimer = kFireInterval;
 	}
 
+	bullets_.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Update();
 	}

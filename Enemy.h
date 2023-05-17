@@ -4,6 +4,9 @@
 #include "ViewProjection.h"
 #include "EnemyBullet.h"
 #include <list>
+#include "Player.h"
+
+class Player;
 
 class Enemy {
 public:
@@ -60,4 +63,6 @@ private:
 	static const int kFireInterval = 60;
 
 	int32_t fireTimer = 0;
+
+	Player* player_ = nullptr;
 };

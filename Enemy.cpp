@@ -1,6 +1,8 @@
 ﻿#include "Enemy.h"
 #include <cassert>
 #include "ImGuiManager.h"
+#include "calc.h"
+#include "Player.h"
 
 Enemy::~Enemy() {
 	for (EnemyBullet* bullet : bullets_) {
@@ -43,8 +45,15 @@ void Enemy::LeavePhaseUpdate(const float& moveSpeed) {
 }
 
 void Enemy::Fire() {
+	assert(player_);
+
 	const float kBulletSpeed = 1.0f;
-	Vector3 velocity(0, 0, -kBulletSpeed);
+
+	Vector3 playerPosition = player_->GetWorldPosition();
+	Vector3 enemyPosition = GetWorldPosition();
+	Vector3 direction = playerPosition - enemyPosition;
+	direction = Calc::Normalize(direction);
+	Vector3 velocity = direction * kBulletSpeed;
 
 	velocity =
 	    Matrix4x4::Transform(velocity, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
@@ -55,9 +64,14 @@ void Enemy::Fire() {
 	bullets_.push_back(newBullet);
 }
 
+Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos = worldTransform_.translation_;
+	return worldPos;
+}
+
 void Enemy::Update() { 
 	
-	const float kMoveSpeed = 0.2f;
+	const float kMoveSpeed = 0.1f;
 
 	/*switch (phase_) { 
 	case Phase::Approach:

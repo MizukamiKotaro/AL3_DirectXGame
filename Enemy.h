@@ -4,7 +4,6 @@
 #include "ViewProjection.h"
 #include "EnemyBullet.h"
 #include <list>
-#include "Player.h"
 
 class Player;
 
@@ -32,6 +31,10 @@ public:
 	void Draw(ViewProjection& viewProjection);
 
 	void Fire();
+
+	void SetPlayer(Player* player) { player_ = player; }
+
+	Vector3 GetWorldPosition();
 
 private:
 

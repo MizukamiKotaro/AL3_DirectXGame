@@ -45,6 +45,11 @@ void Player::Attack() {
 	}
 }
 
+Vector3 Player::GetWorldPosition() {
+	Vector3 worldPos = worldTransform_.translation_;
+	return worldPos;
+}
+
 void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();

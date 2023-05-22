@@ -17,6 +17,10 @@ public:
 
 	void OnCollision();
 
+	Vector3 GetWorldPosition();
+
+	float GetRadius() { return radius_; }
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -34,4 +38,6 @@ private:
 	int32_t deathTimer_ = kLifeTime;
 
 	bool isDead_ = false;
+
+	float radius_ = 0;
 };

@@ -20,6 +20,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.translation_ = {5.0f, 0.0f, 25.0f};
 
 	ApproachPhaseInitialize();
+
+	radius_ = 1.0f;
 }
 
 void Enemy::ApproachPhaseInitialize() { 

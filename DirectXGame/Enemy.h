@@ -40,6 +40,8 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	float GetRadius() { return radius_; }
+
 private:
 
 	enum class Phase {
@@ -72,4 +74,6 @@ private:
 	int32_t fireTimer = 0;
 
 	Player* player_ = nullptr;
+
+	float radius_ = 0;
 };

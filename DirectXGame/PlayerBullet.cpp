@@ -13,6 +13,13 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	worldTransform_.translation_ = position;
 
 	velocity_ = velcity;
+
+	radius_ = 1.0f;
+}
+
+Vector3 PlayerBullet::GetWorldPosition() {
+	Vector3 worldPos = worldTransform_.translation_;
+	return worldPos;
 }
 
 void PlayerBullet::OnCollision() { 

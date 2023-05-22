@@ -40,6 +40,8 @@ public:
 
 	const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
+	float GetRadius() { return radius_; }
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -51,4 +53,7 @@ private:
 	Input* input_ = nullptr;
 
 	std::list<PlayerBullet*> bullets_;
+	//当たり判定用
+	float radius_ = 0;
+
 };

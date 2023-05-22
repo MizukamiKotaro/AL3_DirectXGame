@@ -4,6 +4,7 @@
 #include "ImGuiManager.h"
 #include <cmath>
 #include <iostream>
+#include "calc.h"
 
 void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& velcity) {
 	assert(model);
@@ -14,16 +15,20 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 	worldTransform_.translation_ = position;
 
-	worldTransform_.scale_ = {0.5f, 0.5f, 3.0f};
-
 	worldTransform_.rotation_.y = std::atan2(velcity.x, velcity.z);
 
-	float length = sqrtf(powf(velcity.x, 2) + powf(velcity.z, 2));
+	float length = Calc::MakeLength(velcity.x, velcity.z);
 
 	worldTransform_.rotation_.x = std::atan2(-velcity.y, length);
 	
-
 	velocity_ = velcity;
+
+	radius_ = 1.0f;
+}
+
+Vector3 EnemyBullet::GetWorldPosition() {
+	Vector3 worldPos = worldTransform_.translation_;
+	return worldPos;
 }
 
 void EnemyBullet::OnCollision() { 

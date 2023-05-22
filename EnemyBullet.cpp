@@ -18,7 +18,10 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 	worldTransform_.rotation_.y = std::atan2(velcity.x, velcity.z);
 
-	worldTransform_.rotation_.x = std::atan2(-velcity.y, velcity.z);
+	float length = sqrtf(powf(velcity.x, 2) + powf(velcity.z, 2));
+
+	worldTransform_.rotation_.x = std::atan2(-velcity.y, length);
+	
 
 	velocity_ = velcity;
 }

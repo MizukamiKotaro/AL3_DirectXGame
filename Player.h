@@ -36,6 +36,10 @@ public:
 
 	Vector3 GetWorldPosition();
 
+	void OnCollision();
+
+	const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;

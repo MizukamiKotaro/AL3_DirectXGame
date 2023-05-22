@@ -15,6 +15,8 @@ public:
 
 	bool IsDead() { return isDead_; }
 
+	void OnCollision();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;

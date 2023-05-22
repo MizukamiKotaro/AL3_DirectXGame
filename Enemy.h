@@ -32,6 +32,10 @@ public:
 
 	void Fire();
 
+	void OnCollision();
+
+	const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
+
 	void SetPlayer(Player* player) { player_ = player; }
 
 	Vector3 GetWorldPosition();

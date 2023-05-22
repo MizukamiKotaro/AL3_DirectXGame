@@ -46,13 +46,12 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
-	if (input_->TriggerKey(DIK_RETURN)) {
-		isStart_ = true;
+	if (input_->TriggerKey(DIK_R)) {
+		GameScene::~GameScene();
+		GameScene::Initialize();
 	}
-	if (IsStart()) {
-		player_->Update();
-		enemy_->Update();
-	}
+	player_->Update();
+	enemy_->Update();
 	debugCamera_->Update();
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_LSHIFT)) {

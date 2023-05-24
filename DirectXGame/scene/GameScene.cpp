@@ -15,54 +15,39 @@ GameScene::~GameScene() {
 }
 
 void GameScene::CheckAllCollisions() { 
-	Vector3 posA = {};
-	Vector3 posB = {};
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
 
 	#pragma region
-	posA = player_->GetWorldPosition();
+	
 	for (EnemyBullet* bullet : enemyBullets) {
-		posB = bullet->GetWorldPosition();
-
-		float length = Calc::MakeLength(posA, posB);
-
-		if (length <= player_->GetRadius() + bullet->GetRadius()) {
-			//player_->OnCollision();
-			bullet->OnCollision();
-		}
+		CheakCollisionPair(player_, bullet);
 	}
 	#pragma endregion
 
 	#pragma region
-	posA = enemy_->GetWorldPosition();
 	for (PlayerBullet* bullet : playerBullets) {
-		posB = bullet->GetWorldPosition();
-
-		float length = Calc::MakeLength(posA, posB);
-
-		if (length <= enemy_->GetRadius() + bullet->GetRadius()) {
-			//enemy_->OnCollision();
-			bullet->OnCollision();
-		}
+		CheakCollisionPair(enemy_, bullet);
 	}
 	#pragma endregion
 
 	#pragma region
 	for (PlayerBullet* playerBullet : playerBullets) {
-		posA = playerBullet->GetWorldPosition();
 		for (EnemyBullet* enemyBullet : enemyBullets) {
-			posB = enemyBullet->GetWorldPosition();
-
-			float length = Calc::MakeLength(posA, posB);
-
-			if (length <= enemyBullet->GetRadius() + playerBullet->GetRadius()) {
-				enemyBullet->OnCollision();
-				playerBullet->OnCollision();
-			}
+			CheakCollisionPair(playerBullet, enemyBullet);
 		}
 	}
 	#pragma endregion
+}
+
+void GameScene::CheakCollisionPair(Collider* colliderA, Collider* colliderB) {
+	Vector3 posA = colliderA->GetWorldPosition();
+	Vector3 posB = colliderB->GetWorldPosition();
+	float length = Calc::MakeLength(posA, posB);
+	if (length <= colliderA->GetRadius() + colliderB->GetRadius()) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
+	}
 }
 
 void GameScene::Initialize() {

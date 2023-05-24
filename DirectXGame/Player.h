@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
@@ -6,8 +6,9 @@
 #include "Vector3.h"
 #include "PlayerBullet.h"
 #include <list>
+#include "Collider.h"
 
-class Player {
+class Player : public Collider {
 public:
 	
 	~Player();
@@ -34,9 +35,9 @@ public:
 
 	void Attack();
 
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
 
-	void OnCollision();
+	void OnCollision() override;
 
 	const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 

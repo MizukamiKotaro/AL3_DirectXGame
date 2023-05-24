@@ -45,6 +45,9 @@ public: // メンバ関数
 
 	void CheckAllCollisions();
 
+private:
+	void CheakCollisionPair(Collider* colliderA, Collider* colliderB);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;

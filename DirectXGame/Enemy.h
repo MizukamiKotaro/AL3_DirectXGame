@@ -1,13 +1,15 @@
-﻿#pragma once
+#pragma once
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "EnemyBullet.h"
 #include <list>
+#include "Collider.h"
 
 class Player;
 
-class Enemy {
+class Enemy : public Collider
+{
 public:
 
 	~Enemy();
@@ -32,13 +34,13 @@ public:
 
 	void Fire();
 
-	void OnCollision();
+	void OnCollision() override;
 
 	const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
 
 	void SetPlayer(Player* player) { player_ = player; }
 
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
 
 	float GetRadius() { return radius_; }
 

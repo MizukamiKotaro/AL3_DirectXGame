@@ -9,12 +9,13 @@ Player::~Player() {
 	}
 }
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& playerPosition) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
+	worldTransform_.translation_ = playerPosition;
 
 	//シングルインスタンスを取得
 	input_ = Input::GetInstance();
@@ -55,6 +56,8 @@ Vector3 Player::GetWorldPosition() {
 	Vector3 worldPos = worldTransform_.translation_;
 	return worldPos;
 }
+
+void Player::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
 void Player::Update() {
 	// 行列を定数バッファに転送

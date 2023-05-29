@@ -14,6 +14,7 @@ GameScene::~GameScene() {
 	delete enemy_;
 	delete skydome_;
 	delete modelSkydome_;
+	delete railCamera_;
 }
 
 void GameScene::CheckAllCollisions() { 
@@ -69,7 +70,8 @@ void GameScene::Initialize() {
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
-	player_->Initialize(model_, playerTextureHandle_);
+	Vector3 playerPosition(0, 0, 10);
+	player_->Initialize(model_, playerTextureHandle_, playerPosition);
 
 	enemy_ = new Enemy();
 
@@ -82,6 +84,10 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_->Initialize(modelSkydome_);
 	
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize(viewProjection_);
+
+	player_->SetParent(railCamera_->GetWorldTransform());
 
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
@@ -100,6 +106,10 @@ void GameScene::Update() {
 	CheckAllCollisions();
 
 	skydome_->Update();
+
+	railCamera_->Update();
+	//ViewProjection hoge = railCamera_->GetViewProjection();
+
 	debugCamera_->Update();
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_LSHIFT)) {
@@ -117,7 +127,11 @@ void GameScene::Update() {
 		viewProjection_.matProjection = tmp.matProjection;
 		viewProjection_.TransferMatrix();
 	} else {
-		viewProjection_.UpdateMatrix();
+		ViewProjection tmp = railCamera_->GetViewProjection();
+		viewProjection_.matView = tmp.matView;
+		viewProjection_.matProjection = tmp.matProjection;
+		viewProjection_.TransferMatrix();
+		//viewProjection_.UpdateMatrix();
 	}
 }
 

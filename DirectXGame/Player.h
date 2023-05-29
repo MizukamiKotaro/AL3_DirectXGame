@@ -18,7 +18,7 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model,uint32_t textureHandle);
+	void Initialize(Model* model,uint32_t textureHandle, const Vector3& playerPosition);
 
 	/// <summary>
 	/// 更新
@@ -42,6 +42,8 @@ public:
 	const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
 	float GetRadius() { return radius_; }
+
+	void SetParent(const WorldTransform* parent);
 
 private:
 	//ワールド変換データ

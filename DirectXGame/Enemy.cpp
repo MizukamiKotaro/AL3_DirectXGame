@@ -1,4 +1,4 @@
-﻿#include "Enemy.h"
+#include "Enemy.h"
 #include <cassert>
 #include "ImGuiManager.h"
 #include "calc.h"
@@ -23,6 +23,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	radius_ = 1.0f;
 }
+
+void Enemy::OnCollision() {}
 
 void Enemy::ApproachPhaseInitialize() { 
 	//発射タイマーの初期化

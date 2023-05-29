@@ -1,4 +1,4 @@
-﻿#include "Player.h"
+#include "Player.h"
 #include <cassert>
 #include "Matrix4x4.h"
 #include "ImGuiManager.h"
@@ -45,6 +45,10 @@ void Player::Attack() {
 
 		bullets_.push_back(newBullet);
 	}
+}
+
+void Player::OnCollision() {
+
 }
 
 Vector3 Player::GetWorldPosition() {

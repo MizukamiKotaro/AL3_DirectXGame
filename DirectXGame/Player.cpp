@@ -47,7 +47,7 @@ void Player::Attack(const WorldTransform* railCameraTransform) {
 		velocity = Matrix4x4::Transform(
 		    velocity, Matrix4x4::MakeRotateXYZMatrix(railCameraTransform->rotation_));
 
-		velocity = Matrix4x4::Transform(velocity, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
+		//velocity = Matrix4x4::Transform(velocity, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
 
 		
 

@@ -1,4 +1,4 @@
-﻿#include "EnemyBullet.h"
+#include "EnemyBullet.h"
 #include <cassert>
 #include "Matrix4x4.h"
 #include "ImGuiManager.h"
@@ -27,7 +27,13 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 }
 
 Vector3 EnemyBullet::GetWorldPosition() {
-	Vector3 worldPos = worldTransform_.translation_;
+	Matrix4x4 worldMatrix = Matrix4x4::MakeAffinMatrix(
+	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+
+	Vector3 worldPos = {};
+	worldPos.x = worldMatrix.m[3][0];
+	worldPos.y = worldMatrix.m[3][1];
+	worldPos.z = worldMatrix.m[3][2];
 	return worldPos;
 }
 

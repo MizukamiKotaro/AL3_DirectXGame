@@ -33,16 +33,26 @@ void Player::Rotate() {
 	}
 }
 
-void Player::Attack() {
+void Player::Attack(const WorldTransform* railCameraTransform) {
 	if (input_->TriggerKey(DIK_SPACE)) {
 
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
+		Vector3 position = Matrix4x4::Transform(
+		    worldTransform_.translation_,
+		    Matrix4x4::MakeAffinMatrix(
+		        railCameraTransform->scale_, railCameraTransform->rotation_,
+		        railCameraTransform->translation_));
+
+		const float kBulletSpeed = 0.5f;
+		Vector3 velocity(0.0f, 0.0f, kBulletSpeed);
+		velocity = Matrix4x4::Transform(
+		    velocity, Matrix4x4::MakeRotateXYZMatrix(railCameraTransform->rotation_));
 
 		velocity = Matrix4x4::Transform(velocity, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
 
+		
+
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_,velocity);
+		newBullet->Initialize(model_, position,velocity);
 
 		bullets_.push_back(newBullet);
 	}
@@ -53,15 +63,21 @@ void Player::OnCollision() {
 }
 
 Vector3 Player::GetWorldPosition() {
-	Vector3 worldPos = worldTransform_.translation_;
+	Matrix4x4 worldMatrix = Matrix4x4::MakeAffinMatrix(
+	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+
+	Vector3 worldPos = {};
+	worldPos.x = worldMatrix.m[3][0];
+	worldPos.y = worldMatrix.m[3][1];
+	worldPos.z = worldMatrix.m[3][2];
 	return worldPos;
 }
 
 void Player::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
-void Player::Update() {
+void Player::Update(const WorldTransform* railCameraTransform) {
 	// 行列を定数バッファに転送
-	worldTransform_.TransferMatrix();
+	worldTransform_.TransferMatrix(); 
 
 	Rotate();
 
@@ -102,7 +118,7 @@ void Player::Update() {
 		return false;
 	});
 
-	Attack();
+	Attack(railCameraTransform);
 
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Update();

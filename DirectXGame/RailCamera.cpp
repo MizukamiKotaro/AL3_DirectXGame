@@ -17,9 +17,9 @@ void RailCamera::Initialize(const ViewProjection& viewProjection) {
 void RailCamera::Update() {
 
 	float velocity = 0.1f;
-	float rotSpeed = 0.01f;
-	worldTransform_.translation_.z -= velocity;
-	worldTransform_.rotation_.z += rotSpeed;
+	float rotSpeed = 0.001f;
+	worldTransform_.translation_.z += velocity;
+	worldTransform_.rotation_.y += rotSpeed;
 
 	worldTransform_.matWorld_ = Matrix4x4::MakeAffinMatrix(worldTransform_.scale_,worldTransform_.rotation_,worldTransform_.translation_);
 

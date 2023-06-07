@@ -101,7 +101,7 @@ void GameScene::Update() {
 		GameScene::~GameScene();
 		GameScene::Initialize();
 	}
-	player_->Update();
+	player_->Update(railCamera_->GetWorldTransform());
 	enemy_->Update();
 	CheckAllCollisions();
 

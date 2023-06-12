@@ -27,13 +27,10 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 }
 
 Vector3 EnemyBullet::GetWorldPosition() {
-	Matrix4x4 worldMatrix = Matrix4x4::MakeAffinMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
-
 	Vector3 worldPos = {};
-	worldPos.x = worldMatrix.m[3][0];
-	worldPos.y = worldMatrix.m[3][1];
-	worldPos.z = worldMatrix.m[3][2];
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	return worldPos;
 }
 

@@ -3,28 +3,28 @@
 #include "ImGuiManager.h"
 #include "calc.h"
 #include "Player.h"
+#include "EnemyBullet.h"
+#include "GameScene.h"
 
 Enemy::~Enemy() {
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
+	
 }
 
-void Enemy::Initialize(Model* model, uint32_t textureHandle) {
+void Enemy::Initialize(const Vector3& position, Model* model, uint32_t textureHandle) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
 
-	worldTransform_.translation_ = {5.0f, 0.0f, 25.0f};
+	worldTransform_.translation_ = position;
 
 	ApproachPhaseInitialize();
 
 	radius_ = 1.0f;
 }
 
-void Enemy::OnCollision() {}
+void Enemy::OnCollision() { isDead_ = true; }
 
 void Enemy::ApproachPhaseInitialize() { 
 	//発射タイマーの初期化
@@ -65,17 +65,14 @@ void Enemy::Fire() {
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
-	bullets_.push_back(newBullet);
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 Vector3 Enemy::GetWorldPosition() {
-	Matrix4x4 worldMatrix = Matrix4x4::MakeAffinMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
-
 	Vector3 worldPos = {};
-	worldPos.x = worldMatrix.m[3][0];
-	worldPos.y = worldMatrix.m[3][1];
-	worldPos.z = worldMatrix.m[3][2];
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	return worldPos;
 }
 
@@ -101,18 +98,6 @@ void Enemy::Update() {
 		fireTimer = kFireInterval;
 	}
 
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
-
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Update();
-	}
-
 	worldTransform_.TransferMatrix();
 	worldTransform_.UpdateMatrix();
 }
@@ -120,7 +105,4 @@ void Enemy::Update() {
 void Enemy::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
 }

@@ -2,11 +2,10 @@
 #include <cassert>
 #include "Matrix4x4.h"
 #include "ImGuiManager.h"
+#include "GameScene.h"
 
 Player::~Player() { 
-	for (PlayerBullet* bullet : bullets_) {
-		delete bullet;
-	}
+	
 }
 
 void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& playerPosition) {
@@ -54,7 +53,7 @@ void Player::Attack(const WorldTransform* railCameraTransform) {
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, position,velocity);
 
-		bullets_.push_back(newBullet);
+		gameScene_->AddPlayerBullet(newBullet);
 	}
 }
 
@@ -63,13 +62,11 @@ void Player::OnCollision() {
 }
 
 Vector3 Player::GetWorldPosition() {
-	Matrix4x4 worldMatrix = Matrix4x4::MakeAffinMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	Vector3 worldPos = {};
-	worldPos.x = worldMatrix.m[3][0];
-	worldPos.y = worldMatrix.m[3][1];
-	worldPos.z = worldMatrix.m[3][2];
+	worldPos.x =worldTransform_.matWorld_.m[3][0];
+	worldPos.y =worldTransform_.matWorld_.m[3][1];
+	worldPos.z =worldTransform_.matWorld_.m[3][2];
 	return worldPos;
 }
 
@@ -110,19 +107,9 @@ void Player::Update(const WorldTransform* railCameraTransform) {
 
 	worldTransform_.UpdateMatrix();
 
-	bullets_.remove_if([](PlayerBullet* bullet) { 
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
+	
 
 	Attack(railCameraTransform);
-
-	for (PlayerBullet* bullet : bullets_) {
-		bullet->Update();
-	}
 
 	//float inputFloat3[3] = {
 	//    worldTransform_.translation_.x, worldTransform_.translation_.y,
@@ -139,10 +126,5 @@ void Player::Update(const WorldTransform* railCameraTransform) {
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
-	for (PlayerBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
-	
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);	
 }

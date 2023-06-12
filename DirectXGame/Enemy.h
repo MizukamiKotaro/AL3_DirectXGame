@@ -2,11 +2,11 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
-#include "EnemyBullet.h"
 #include <list>
 #include "Collider.h"
 
 class Player;
+class GameScene;
 
 class Enemy : public Collider
 {
@@ -19,7 +19,7 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(const Vector3& position, Model* model, uint32_t textureHandle);
 
 	/// <summary>
 	/// 更新
@@ -36,13 +36,16 @@ public:
 
 	void OnCollision() override;
 
-	const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
+	//const std::list<EnemyBullet*>& GetBullets() { return bullets_; }
 
 	void SetPlayer(Player* player) { player_ = player; }
+	void SetGameScene(GameScene* gamescene) { gameScene_ = gamescene; }
 
 	Vector3 GetWorldPosition() override;
 
 	float GetRadius() { return radius_; }
+
+	bool IsDead() { return isDead_; }
 
 private:
 
@@ -68,14 +71,15 @@ private:
 	
 	Phase phase_ = Phase::Approach;
 
-	std::list<EnemyBullet*> bullets_;
-
 	// 発射間隔
 	static const int kFireInterval = 60;
 
 	int32_t fireTimer = 0;
 
 	Player* player_ = nullptr;
+	GameScene* gameScene_ = nullptr;
 
 	float radius_ = 0;
+
+	bool isDead_ = false;
 };

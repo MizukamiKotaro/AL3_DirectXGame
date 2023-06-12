@@ -9,10 +9,14 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "Player.h"
+#include "PlayerBullet.h"
 #include "DebugCamera.h"
 #include "Enemy.h"
+#include "EnemyBullet.h"
 #include "Skydome.h"
 #include "RailCamera.h"
+#include <list>
+#include <sstream>
 
 /// <summary>
 /// ゲームシーン
@@ -45,10 +49,20 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-	void CheckAllCollisions();
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+	void AddPlayerBullet(PlayerBullet* playerBullet);
 
 private:
+	void CheckAllCollisions();
+
 	void CheakCollisionPair(Collider* colliderA, Collider* colliderB);
+
+	void LoadEnemyPopData();
+
+	void UpdateEnemyPopCommands();
+
+	void EnemyGeneration(const Vector3& position);
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -64,12 +78,19 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 
 	Player* player_ = nullptr;
+	std::list<PlayerBullet*> playerBullets_;
 
 	bool isDebugCameraActive_ = false;
 
 	DebugCamera* debugCamera_ = nullptr;
 
-	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemies_;
+	std::list<EnemyBullet*> enemyBullets_;
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
+
+	bool IsWait_ = false;
+	int32_t waitTimer_ = 0;
 
 	Skydome* skydome_ = nullptr;
 

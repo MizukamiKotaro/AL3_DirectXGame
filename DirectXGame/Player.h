@@ -8,6 +8,8 @@
 #include <list>
 #include "Collider.h"
 
+class GameScene;
+
 class Player : public Collider {
 public:
 	
@@ -39,11 +41,13 @@ public:
 
 	void OnCollision() override;
 
-	const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
+	//const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
 	float GetRadius() { return radius_; }
 
 	void SetParent(const WorldTransform* parent);
+
+	void SetGameScene(GameScene* gamescene) { gameScene_ = gamescene; }
 
 private:
 	//ワールド変換データ
@@ -55,7 +59,8 @@ private:
 	//キーボード入力
 	Input* input_ = nullptr;
 
-	std::list<PlayerBullet*> bullets_;
+	GameScene* gameScene_ = nullptr;
+
 	//当たり判定用
 	float radius_ = 0;
 

@@ -3,6 +3,7 @@
 #include "Matrix4x4.h"
 #include "ImGuiManager.h"
 #include "GameScene.h"
+#include "calc.h"
 
 Player::~Player() { 
 	
@@ -20,6 +21,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& pla
 	input_ = Input::GetInstance();
 
 	radius_ = 1.0f;
+
+	worldTransform3DReticle_.Initialize();
 }
 
 void Player::Rotate() { 
@@ -35,20 +38,13 @@ void Player::Rotate() {
 void Player::Attack(const WorldTransform* railCameraTransform) {
 	if (input_->TriggerKey(DIK_SPACE)) {
 
-		Vector3 position = Matrix4x4::Transform(
-		    worldTransform_.translation_,
-		    Matrix4x4::MakeAffinMatrix(
-		        railCameraTransform->scale_, railCameraTransform->rotation_,
-		        railCameraTransform->translation_));
+		Vector3 position = Matrix4x4::Transform(worldTransform_.translation_,railCameraTransform->matWorld_);
 
 		const float kBulletSpeed = 0.5f;
-		Vector3 velocity(0.0f, 0.0f, kBulletSpeed);
-		velocity = Matrix4x4::Transform(
-		    velocity, Matrix4x4::MakeRotateXYZMatrix(railCameraTransform->rotation_));
-
-		//velocity = Matrix4x4::Transform(velocity, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
-
+		Vector3 velocity;
 		
+		velocity = worldTransform3DReticle_.translation_ - worldTransform_.translation_;
+		velocity = Calc::Normalize(velocity) * kBulletSpeed;
 
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, position,velocity);
@@ -73,6 +69,21 @@ Vector3 Player::GetWorldPosition() {
 void Player::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
 
 void Player::Update(const WorldTransform* railCameraTransform) {
+	//自機から3Dレティクルへの距離
+	const float kDistancePlayerTo3DReticle = 50.0f;
+	//自機から3Dレティクルへのオフセット（z+向き）
+	Vector3 offset = {0, 0, 1.0f};
+	//自機のワールド行列の回転を反映
+	offset = Matrix4x4::Multiply(offset, worldTransform_.matWorld_);
+	//ベクトルの長さを整える
+	offset = Calc::Normalize(offset) * kDistancePlayerTo3DReticle;
+	//3Dレティクルの座標を設定
+	worldTransform3DReticle_.translation_ =
+	    Matrix4x4::Transform(offset, railCameraTransform->matWorld_);
+
+	worldTransform3DReticle_.UpdateMatrix();
+	worldTransform3DReticle_.TransferMatrix();
+
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix(); 
 
@@ -127,4 +138,7 @@ void Player::Update(const WorldTransform* railCameraTransform) {
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);	
+	model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);	
+
+	
 }

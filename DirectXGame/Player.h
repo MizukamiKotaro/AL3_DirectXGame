@@ -52,6 +52,8 @@ public:
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
+	// 3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
 	//モデル
 	Model* model_ = nullptr;
 	//テクスチャハンドル

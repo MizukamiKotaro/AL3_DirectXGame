@@ -1,5 +1,6 @@
 #pragma once
 #include "Model.h"
+#include "Sprite.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Input.h"
@@ -20,18 +21,20 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model,uint32_t textureHandle, const Vector3& playerPosition);
+	void Initialize(Model* model,uint32_t textureHandle,uint32_t reticleTextureHandle, const Vector3& playerPosition);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update(const WorldTransform* railCameraTransform);
+	void Update(const WorldTransform* railCameraTransform, ViewProjection& viewProjection);
 
 	// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション(参照渡し)</param>
 	void Draw(ViewProjection& viewProjection);
+
+	void DrawUI();
 
 	void Rotate();
 
@@ -54,6 +57,8 @@ private:
 	WorldTransform worldTransform_;
 	// 3Dレティクル用ワールドトランスフォーム
 	WorldTransform worldTransform3DReticle_;
+	Sprite* sprite2DReticle_ = nullptr;
+
 	//モデル
 	Model* model_ = nullptr;
 	//テクスチャハンドル

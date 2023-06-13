@@ -23,7 +23,7 @@ public:
 	}
 
 	// 変換
-	Vector3& operator=(Vector3 obj) {
+	Vector3 operator=(Vector3 obj) {
 		x = obj.x;
 		y = obj.y;
 		z = obj.z;

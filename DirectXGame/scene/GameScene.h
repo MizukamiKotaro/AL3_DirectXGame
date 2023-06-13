@@ -70,6 +70,7 @@ private: // メンバ変数
 	Audio* audio_ = nullptr;
 
 	uint32_t playerTextureHandle_ = 0;
+	uint32_t reticleTextureHandle_ = 0;
 
 	uint32_t enemyTextureHandle_ = 0;
 

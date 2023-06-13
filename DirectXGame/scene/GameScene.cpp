@@ -163,6 +163,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	playerTextureHandle_ = TextureManager::Load("nikoniko.png");
+	reticleTextureHandle_ = TextureManager::Load("reticle.png");
 
 	enemyTextureHandle_ = TextureManager::Load("eye.png");
 
@@ -178,7 +179,7 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	//自キャラの初期化
 	Vector3 playerPosition(0, 0, 20);
-	player_->Initialize(model_, playerTextureHandle_, playerPosition);
+	player_->Initialize(model_, playerTextureHandle_, reticleTextureHandle_, playerPosition);
 	player_->SetGameScene(this);
 
 	skydome_ = new Skydome();
@@ -206,7 +207,7 @@ void GameScene::Update() {
 	railCamera_->Update();
 	// ViewProjection hoge = railCamera_->GetViewProjection();
 
-	player_->Update(railCamera_->GetWorldTransform());
+	player_->Update(railCamera_->GetWorldTransform(), viewProjection_);
 	for (PlayerBullet* bullet : playerBullets_) {
 		bullet->Update();
 	}
@@ -323,6 +324,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	player_->DrawUI();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

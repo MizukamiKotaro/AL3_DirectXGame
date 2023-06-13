@@ -1,4 +1,4 @@
-﻿#include "Matrix3x3.h"
+#include "Matrix3x3.h"
 #include "Matrix4x4.h"
 #include <assert.h>
 #include <cmath>
@@ -247,5 +247,71 @@ Matrix4x4 Matrix4x4::MakeAffinMatrix(
 	    translate.z,
 	    1};
 
+	return result;
+}
+
+Matrix4x4 Matrix4x4::MakePerspectiveFovMatrix(
+    float fovY, float aspectRatio, float nearClip, float farClip) {
+	Matrix4x4 result = {
+	    1.0f / (aspectRatio * tan(fovY / 2)),
+	    0,
+	    0,
+	    0,
+	    0,
+	    1.0f / tan(fovY / 2),
+	    0,
+	    0,
+	    0,
+	    0,
+	    farClip / (farClip - nearClip),
+	    1,
+	    0,
+	    0,
+	    -nearClip * farClip / (farClip - nearClip),
+	    0};
+	return result;
+}
+
+Matrix4x4 Matrix4x4::MakeOrthographicMatrix(
+    float left, float top, float right, float bottom, float nearClip, float farClip) {
+	Matrix4x4 result = {
+	    2.0f / (right - left),
+	    0,
+	    0,
+	    0,
+	    0,
+	    2.0f / (top - bottom),
+	    0,
+	    0,
+	    0,
+	    0,
+	    1.0f / (farClip - nearClip),
+	    0,
+	    (left + right) / (left - right),
+	    (top + bottom) / (bottom - top),
+	    nearClip / (nearClip - farClip),
+	    1};
+	return result;
+}
+
+Matrix4x4 Matrix4x4::MakeViewportMatrix(
+    float left, float top, float width, float height, float minDepth, float maxDepth) {
+	Matrix4x4 result = {
+	    width / 2,
+	    0,
+	    0,
+	    0,
+	    0,
+	    -height / 2,
+	    0,
+	    0,
+	    0,
+	    0,
+	    maxDepth - minDepth,
+	    0,
+	    left + width / 2,
+	    top + height / 2,
+	    minDepth,
+	    1};
 	return result;
 }

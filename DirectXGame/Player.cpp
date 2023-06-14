@@ -7,8 +7,7 @@
 
 
 Player::~Player() { 
-	
-}
+	delete sprite2DReticle_; }
 
 void Player::Initialize(Model* model, uint32_t textureHandle,uint32_t reticleTextureHandle, const Vector3& playerPosition) {
 	assert(model);
@@ -26,7 +25,6 @@ void Player::Initialize(Model* model, uint32_t textureHandle,uint32_t reticleTex
 	worldTransform3DReticle_.Initialize();
 	//uint32_t textureReticle = TextureManager::Load("reticle.png");
 	sprite2DReticle_ = Sprite::Create(reticleTextureHandle, {0.0f,0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
-	delete sprite2DReticle_;
 }
 
 void Player::Rotate() { 

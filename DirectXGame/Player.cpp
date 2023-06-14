@@ -7,7 +7,8 @@
 
 
 Player::~Player() { 
-	delete sprite2DReticle_; }
+	delete sprite2DReticle_; 
+}
 
 void Player::Initialize(Model* model, uint32_t textureHandle,uint32_t reticleTextureHandle, const Vector3& playerPosition) {
 	assert(model);
@@ -24,6 +25,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle,uint32_t reticleTex
 	radius_ = 1.0f;
 
 	worldTransform3DReticle_.Initialize();
+	worldTransform3DReticle_.scale_ = {0.5f, 0.5f, 0.5f};
 	//uint32_t textureReticle = TextureManager::Load("reticle.png");
 	sprite2DReticle_ = Sprite::Create(reticleTextureHandle, {0.0f,0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
 }
@@ -44,13 +46,15 @@ void Player::Attack(const WorldTransform* railCameraTransform) {
 		Vector3 position = Matrix4x4::Transform(worldTransform_.translation_,railCameraTransform->matWorld_);
 
 		const float kBulletSpeed = 0.5f;
-		Vector3 velocity;
+		Vector3 velocity = {
+		    worldTransform3DReticle_.matWorld_.m[3][0], worldTransform3DReticle_.matWorld_.m[3][1],
+		    worldTransform3DReticle_.matWorld_.m[3][2]};
 		
-		velocity = worldTransform3DReticle_.translation_ - GetWorldPosition();
+		velocity = velocity - GetWorldPosition();
 		velocity = Calc::Normalize(velocity) * kBulletSpeed;
 
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, position,velocity);
+		newBullet->Initialize(model_, position, velocity, worldTransform_.rotation_);
 
 		gameScene_->AddPlayerBullet(newBullet);
 	}
@@ -72,6 +76,42 @@ Vector3 Player::GetWorldPosition() {
 void Player::SetParent(const WorldTransform* parent) { 
 	worldTransform_.parent_ = parent;
 	//worldTransform3DReticle_.parent_ = parent;
+}
+
+void Player::ReticleUpdate(ViewProjection& viewProjection) {
+
+	// 自機から3Dレティクルへの距離
+	const float kDistancePlayerTo3DReticle = 50.0f;
+	// 自機から3Dレティクルへのオフセット（z+向き）
+	Vector3 offset = {0, 0, 1.0f};
+	// 自機のワールド行列の回転を反映
+	offset = Matrix4x4::Multiply(offset, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
+	// ベクトルの長さを整える
+	offset = Calc::Normalize(offset) * kDistancePlayerTo3DReticle;
+	// 3Dレティクルの座標を設定
+	worldTransform3DReticle_.translation_ = offset + GetWorldPosition();
+
+	worldTransform3DReticle_.TransferMatrix();
+	worldTransform3DReticle_.UpdateMatrix();
+
+	Vector3 positionReticle = {
+	    worldTransform3DReticle_.matWorld_.m[3][0] - 1.2f,
+	    worldTransform3DReticle_.matWorld_.m[3][1] + 1.2f,
+	    worldTransform3DReticle_.matWorld_.m[3][2]};
+
+	// ビューポート行列
+	Matrix4x4 matViewport =
+	    Matrix4x4::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+	// ビュー行列とプロジェクション行列、ビューポート行列を結合する。
+	Matrix4x4 matViewProjectionViewport =
+	    viewProjection.matView * viewProjection.matProjection * matViewport;
+
+	// ワールド→スクリーン座標変換
+	positionReticle = Matrix4x4::Transform(positionReticle, matViewProjectionViewport);
+
+	// スプライトのレティクルに座標設定
+	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 }
 
 void Player::Update(const WorldTransform* railCameraTransform, ViewProjection& viewProjection) {
@@ -110,38 +150,7 @@ void Player::Update(const WorldTransform* railCameraTransform, ViewProjection& v
 
 	worldTransform_.UpdateMatrix();
 
-	// 自機から3Dレティクルへの距離
-	const float kDistancePlayerTo3DReticle = 50.0f;
-	// 自機から3Dレティクルへのオフセット（z+向き）
-	Vector3 offset = {0, 0, 1.0f};
-	// 自機のワールド行列の回転を反映
-	offset = Matrix4x4::Multiply(offset, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
-	// ベクトルの長さを整える
-	offset = Calc::Normalize(offset) * kDistancePlayerTo3DReticle;
-	// 3Dレティクルの座標を設定
-	worldTransform3DReticle_.translation_ = offset + GetWorldPosition();
-
-	worldTransform3DReticle_.UpdateMatrix();
-	worldTransform3DReticle_.TransferMatrix();
-
-	Vector3 positionReticle = {
-	    worldTransform3DReticle_.matWorld_.m[3][0],
-		worldTransform3DReticle_.matWorld_.m[3][1],
-	    worldTransform3DReticle_.matWorld_.m[3][2]};
-
-	//ビューポート行列
-	Matrix4x4 matViewport =
-	    Matrix4x4::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
-
-	//ビュー行列とプロジェクション行列、ビューポート行列を結合する。
-	Matrix4x4 matViewProjectionViewport =
-	    viewProjection.matView * viewProjection.matProjection * matViewport;
-
-	//ワールド→スクリーン座標変換
-	positionReticle = Matrix4x4::Transform(positionReticle, matViewProjectionViewport);
-
-	//スプライトのレティクルに座標設定
-	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+	ReticleUpdate(viewProjection);
 
 	Attack(railCameraTransform);
 
@@ -161,7 +170,7 @@ void Player::Update(const WorldTransform* railCameraTransform, ViewProjection& v
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);	
-	model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);	
+	//model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);	
 }
 
 void Player::DrawUI() { 

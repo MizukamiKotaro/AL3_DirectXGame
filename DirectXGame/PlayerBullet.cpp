@@ -3,7 +3,8 @@
 #include "Matrix4x4.h"
 #include "ImGuiManager.h"
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velcity) {
+void PlayerBullet::Initialize(
+    Model* model, const Vector3& position, const Vector3& velcity, const Vector3& rotate) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = TextureManager::Load("black.png");
@@ -11,6 +12,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	worldTransform_.Initialize();
 
 	worldTransform_.translation_ = position;
+	worldTransform_.rotation_ = rotate;
 
 	velocity_ = velcity;
 

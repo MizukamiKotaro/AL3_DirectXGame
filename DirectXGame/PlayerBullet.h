@@ -8,7 +8,7 @@
 
 class PlayerBullet : public Collider {
 public:
-	void Initialize(Model* model, const Vector3& position, const Vector3& velcity);
+	void Initialize(Model* model, const Vector3& position, const Vector3& velcity, const Vector3& rotate);
 
 	void Update();
 

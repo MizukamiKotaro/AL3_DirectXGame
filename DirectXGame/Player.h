@@ -53,6 +53,10 @@ public:
 	void SetGameScene(GameScene* gamescene) { gameScene_ = gamescene; }
 
 private:
+
+	void ReticleUpdate(ViewProjection& viewProjection);
+
+private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	// 3Dレティクル用ワールドトランスフォーム

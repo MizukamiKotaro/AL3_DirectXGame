@@ -12,6 +12,7 @@ Player::~Player() {
 void Player::Initialize(Model* model, uint32_t textureHandle,uint32_t reticleTextureHandle, const Vector3& playerPosition) {
 	assert(model);
 	model_ = model;
+	//textureHandle_ = reticleTextureHandle;
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
@@ -163,4 +164,6 @@ void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);	
 }
 
-void Player::DrawUI() { sprite2DReticle_->Draw(); }
+void Player::DrawUI() { 
+	sprite2DReticle_->Draw();
+}

@@ -41,7 +41,7 @@ void Player::Rotate() {
 }
 
 void Player::Attack(const WorldTransform* railCameraTransform) {
-	if (input_->TriggerKey(DIK_SPACE)) {
+	if (input_->IsPressMouse(0)) {
 
 		Vector3 position = Matrix4x4::Transform(worldTransform_.translation_,railCameraTransform->matWorld_);
 
@@ -80,38 +80,73 @@ void Player::SetParent(const WorldTransform* parent) {
 
 void Player::ReticleUpdate(ViewProjection& viewProjection) {
 
-	// 自機から3Dレティクルへの距離
-	const float kDistancePlayerTo3DReticle = 50.0f;
-	// 自機から3Dレティクルへのオフセット（z+向き）
-	Vector3 offset = {0, 0, 1.0f};
-	// 自機のワールド行列の回転を反映
-	offset = Matrix4x4::Multiply(offset, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
-	// ベクトルの長さを整える
-	offset = Calc::Normalize(offset) * kDistancePlayerTo3DReticle;
-	// 3Dレティクルの座標を設定
-	worldTransform3DReticle_.translation_ = offset + GetWorldPosition();
+	POINT mousePosition;
+
+	GetCursorPos(&mousePosition);
+
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	ScreenToClient(hwnd, &mousePosition);
+
+	sprite2DReticle_->SetPosition(
+	    Vector2(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y)));
+
+	Matrix4x4 matViewport =
+	    Matrix4x4::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+	Matrix4x4 matVPV = viewProjection.matView * viewProjection.matProjection * matViewport;
+
+	Matrix4x4 matInverseVPV = Matrix4x4::Inverse(matVPV);
+
+	Vector3 posNear =
+	    Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0);
+	Vector3 posFar =
+	    Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1);
+
+	posNear = Matrix4x4::Transform(posNear, matInverseVPV);
+	posFar = Matrix4x4::Transform(posFar, matInverseVPV);
+
+	Vector3 mouseDirection = posFar - posNear;
+	mouseDirection = Calc::Normalize(mouseDirection);
+
+	const float kDistanceTestObject = 70.0f;
+
+	worldTransform3DReticle_.translation_ = posNear + mouseDirection * kDistanceTestObject;
 
 	worldTransform3DReticle_.TransferMatrix();
 	worldTransform3DReticle_.UpdateMatrix();
 
-	Vector3 positionReticle = {
-	    worldTransform3DReticle_.matWorld_.m[3][0],
-	    worldTransform3DReticle_.matWorld_.m[3][1],
-	    worldTransform3DReticle_.matWorld_.m[3][2]};
+	//// 自機から3Dレティクルへの距離
+	//const float kDistancePlayerTo3DReticle = 50.0f;
+	//// 自機から3Dレティクルへのオフセット（z+向き）
+	//Vector3 offset = {0, 0, 1.0f};
+	//// 自機のワールド行列の回転を反映
+	//offset = Matrix4x4::Multiply(offset, Matrix4x4::MakeRotateXYZMatrix(worldTransform_.rotation_));
+	//// ベクトルの長さを整える
+	//offset = Calc::Normalize(offset) * kDistancePlayerTo3DReticle;
+	//// 3Dレティクルの座標を設定
+	//worldTransform3DReticle_.translation_ = offset + GetWorldPosition();
 
-	// ビューポート行列
-	Matrix4x4 matViewport =
-	    Matrix4x4::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	//worldTransform3DReticle_.TransferMatrix();
+	//worldTransform3DReticle_.UpdateMatrix();
 
-	// ビュー行列とプロジェクション行列、ビューポート行列を結合する。
-	Matrix4x4 matViewProjectionViewport =
-	    viewProjection.matView * viewProjection.matProjection * matViewport;
+	//Vector3 positionReticle = {
+	//    worldTransform3DReticle_.matWorld_.m[3][0],
+	//    worldTransform3DReticle_.matWorld_.m[3][1],
+	//    worldTransform3DReticle_.matWorld_.m[3][2]};
 
-	// ワールド→スクリーン座標変換
-	positionReticle = Matrix4x4::Transform(positionReticle, matViewProjectionViewport);
+	//// ビューポート行列
+	//Matrix4x4 matViewport =
+	//    Matrix4x4::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 
-	// スプライトのレティクルに座標設定
-	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+	//// ビュー行列とプロジェクション行列、ビューポート行列を結合する。
+	//Matrix4x4 matViewProjectionViewport =
+	//    viewProjection.matView * viewProjection.matProjection * matViewport;
+
+	//// ワールド→スクリーン座標変換
+	//positionReticle = Matrix4x4::Transform(positionReticle, matViewProjectionViewport);
+
+	//// スプライトのレティクルに座標設定
+	//sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 }
 
 void Player::Update(const WorldTransform* railCameraTransform, ViewProjection& viewProjection) {

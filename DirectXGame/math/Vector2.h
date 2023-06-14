@@ -1,7 +1,7 @@
 #pragma once
 struct Vector2 {
 public:
-	Vector2() {
+	/*Vector2() {
 		x = 0;
 		y = 0;
 	}
@@ -13,7 +13,7 @@ public:
 	Vector2(const Vector2& obj) {
 		x = obj.x;
 		y = obj.y;
-	}
+	}*/
 
 	Vector2& operator=(Vector2 obj) {
 		x = obj.x;

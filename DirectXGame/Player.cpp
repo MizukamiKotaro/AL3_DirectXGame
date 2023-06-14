@@ -95,8 +95,8 @@ void Player::ReticleUpdate(ViewProjection& viewProjection) {
 	worldTransform3DReticle_.UpdateMatrix();
 
 	Vector3 positionReticle = {
-	    worldTransform3DReticle_.matWorld_.m[3][0] - 1.2f,
-	    worldTransform3DReticle_.matWorld_.m[3][1] + 1.2f,
+	    worldTransform3DReticle_.matWorld_.m[3][0],
+	    worldTransform3DReticle_.matWorld_.m[3][1],
 	    worldTransform3DReticle_.matWorld_.m[3][2]};
 
 	// ビューポート行列
@@ -170,7 +170,7 @@ void Player::Update(const WorldTransform* railCameraTransform, ViewProjection& v
 
 void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);	
-	//model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);	
+	model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);	
 }
 
 void Player::DrawUI() { 

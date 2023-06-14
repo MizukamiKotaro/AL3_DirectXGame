@@ -165,6 +165,4 @@ void Player::Draw(ViewProjection& viewProjection) {
 	model_->Draw(worldTransform3DReticle_, viewProjection, textureHandle_);	
 }
 
-void Player::DrawUI() {
-
-}
+void Player::DrawUI() { sprite2DReticle_->Draw(); }

@@ -10,9 +10,9 @@ void PlayerBullet::Initialize(
 	textureHandle_ = TextureManager::Load("black.png");
 
 	worldTransform_.Initialize();
-
+	(void)rotate;
 	worldTransform_.translation_ = position;
-	worldTransform_.rotation_ = rotate;
+	//worldTransform_.rotation_ = rotate;
 
 	velocity_ = velcity;
 
@@ -34,7 +34,7 @@ void PlayerBullet::OnCollision() {
 void PlayerBullet::Update() {
 	worldTransform_.translation_ += velocity_;
 
-	worldTransform_.TransferMatrix();
+	//worldTransform_.TransferMatrix();
 	worldTransform_.UpdateMatrix();
 
 	if (--deathTimer_ <= 0) {

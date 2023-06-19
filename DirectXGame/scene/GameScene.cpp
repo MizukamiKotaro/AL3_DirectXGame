@@ -207,7 +207,7 @@ void GameScene::Update() {
 	railCamera_->Update();
 	// ViewProjection hoge = railCamera_->GetViewProjection();
 
-	player_->Update(railCamera_->GetWorldTransform(), viewProjection_);
+	player_->Update( viewProjection_);
 	for (PlayerBullet* bullet : playerBullets_) {
 		bullet->Update();
 	}

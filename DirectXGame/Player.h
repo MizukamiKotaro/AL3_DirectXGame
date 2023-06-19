@@ -26,7 +26,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update(const WorldTransform* railCameraTransform, ViewProjection& viewProjection);
+	void Update( ViewProjection& viewProjection);
 
 	// <summary>
 	/// 描画
@@ -38,7 +38,7 @@ public:
 
 	void Rotate();
 
-	void Attack(const WorldTransform* railCameraTransform);
+	void Attack();
 
 	Vector3 GetWorldPosition() override;
 

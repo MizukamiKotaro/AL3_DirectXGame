@@ -40,21 +40,20 @@ void Player::Rotate() {
 	}
 }
 
-void Player::Attack(const WorldTransform* railCameraTransform) {
+void Player::Attack() {
 	if (input_->IsPressMouse(0)) {
-
-		Vector3 position = Matrix4x4::Transform(worldTransform_.translation_,railCameraTransform->matWorld_);
 
 		const float kBulletSpeed = 0.5f;
 		Vector3 velocity = {
 		    worldTransform3DReticle_.matWorld_.m[3][0], worldTransform3DReticle_.matWorld_.m[3][1],
 		    worldTransform3DReticle_.matWorld_.m[3][2]};
-		
+
 		velocity = velocity - GetWorldPosition();
+		
 		velocity = Calc::Normalize(velocity) * kBulletSpeed;
 
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, position, velocity, worldTransform_.rotation_);
+		newBullet->Initialize(model_, GetWorldPosition(), velocity, worldTransform_.rotation_);
 
 		gameScene_->AddPlayerBullet(newBullet);
 	}
@@ -108,7 +107,7 @@ void Player::ReticleUpdate(ViewProjection& viewProjection) {
 	Vector3 mouseDirection = posFar - posNear;
 	mouseDirection = Calc::Normalize(mouseDirection);
 
-	const float kDistanceTestObject = 70.0f;
+	const float kDistanceTestObject = 50.0f;
 
 	worldTransform3DReticle_.translation_ = posNear + mouseDirection * kDistanceTestObject;
 
@@ -149,7 +148,7 @@ void Player::ReticleUpdate(ViewProjection& viewProjection) {
 	//sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
 }
 
-void Player::Update(const WorldTransform* railCameraTransform, ViewProjection& viewProjection) {
+void Player::Update( ViewProjection& viewProjection) {
 
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix(); 
@@ -187,7 +186,7 @@ void Player::Update(const WorldTransform* railCameraTransform, ViewProjection& v
 
 	ReticleUpdate(viewProjection);
 
-	Attack(railCameraTransform);
+	Attack();
 
 	//float inputFloat3[3] = {
 	//    worldTransform_.translation_.x, worldTransform_.translation_.y,

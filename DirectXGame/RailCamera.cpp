@@ -16,7 +16,7 @@ void RailCamera::Initialize(const ViewProjection& viewProjection) {
 
 void RailCamera::Update() {
 
-	float velocity = 0.1f;
+	float velocity = 0.0f;
 	//float rotSpeed = 0.001f;
 	worldTransform_.translation_.z += velocity;
 	//worldTransform_.rotation_.y += rotSpeed;
@@ -26,8 +26,8 @@ void RailCamera::Update() {
 	viewProjection_.matView = Matrix4x4::Inverse(worldTransform_.matWorld_);
 
 	ImGui::Begin("Camera");
-	ImGui::SliderFloat3("Translation", &worldTransform_.translation_.x, -50.0f, 50.0f);
-	ImGui::SliderFloat3("Rotation", &worldTransform_.rotation_.x, -50.0f, 50.0f);
+	//ImGui::SliderFloat3("Translation", &worldTransform_.translation_.x, -50.0f, 50.0f);
+	ImGui::SliderFloat3("Rotation", &worldTransform_.rotation_.x, -3.14f, 3.14f);
 	ImGui::End();
 }
 

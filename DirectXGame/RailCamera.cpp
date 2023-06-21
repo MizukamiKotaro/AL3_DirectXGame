@@ -9,16 +9,16 @@ void RailCamera::Initialize(const ViewProjection& viewProjection) {
 	worldTransform_.rotation_ = viewProjection.rotation_;
 
 	//天球の半径の2倍より少し大きいくらい
-	//viewProjection_.farZ = 300.0f;
+	viewProjection_.farZ = 1050.0f;
 	//出てないから今は初期値
 	viewProjection_.Initialize();
 }
 
 void RailCamera::Update() {
 
-	float velocity = 0.0f;
+	//float velocity = 0.01f;
 	//float rotSpeed = 0.001f;
-	worldTransform_.translation_.z += velocity;
+	//worldTransform_.translation_.z += velocity;
 	//worldTransform_.rotation_.y += rotSpeed;
 
 	worldTransform_.matWorld_ = Matrix4x4::MakeAffinMatrix(worldTransform_.scale_,worldTransform_.rotation_,worldTransform_.translation_);

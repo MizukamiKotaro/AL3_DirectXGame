@@ -27,7 +27,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle,uint32_t reticleTex
 	worldTransform3DReticle_.Initialize();
 	worldTransform3DReticle_.scale_ = {0.5f, 0.5f, 0.5f};
 	//uint32_t textureReticle = TextureManager::Load("reticle.png");
-	sprite2DReticle_ = Sprite::Create(reticleTextureHandle, {0.0f,0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
+	sprite2DReticle_ = Sprite::Create(reticleTextureHandle, {640.0f,360.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.5f, 0.5f});
 }
 
 void Player::Rotate() { 
@@ -41,7 +41,29 @@ void Player::Rotate() {
 }
 
 void Player::Attack() {
-	if (input_->IsPressMouse(0)) {
+	XINPUT_STATE joyState;
+	//ゲームパッド未接続なら何もせずに抜ける
+	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+		return;
+	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+
+		const float kBulletSpeed = 0.5f;
+		Vector3 velocity = {
+		    worldTransform3DReticle_.matWorld_.m[3][0], worldTransform3DReticle_.matWorld_.m[3][1],
+		    worldTransform3DReticle_.matWorld_.m[3][2]};
+
+		velocity = velocity - GetWorldPosition();
+
+		velocity = Calc::Normalize(velocity) * kBulletSpeed;
+
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, GetWorldPosition(), velocity, worldTransform_.rotation_);
+
+		gameScene_->AddPlayerBullet(newBullet);
+	}
+	/*if (input_->IsPressMouse(0)) {
 
 		const float kBulletSpeed = 0.5f;
 		Vector3 velocity = {
@@ -56,7 +78,7 @@ void Player::Attack() {
 		newBullet->Initialize(model_, GetWorldPosition(), velocity, worldTransform_.rotation_);
 
 		gameScene_->AddPlayerBullet(newBullet);
-	}
+	}*/
 }
 
 void Player::OnCollision() {
@@ -79,7 +101,33 @@ void Player::SetParent(const WorldTransform* parent) {
 
 void Player::ReticleUpdate(ViewProjection& viewProjection) {
 
-	POINT mousePosition;
+	//スプライトの現在座標を取得
+	Vector2 spritePosition = sprite2DReticle_->GetPosition();
+
+	XINPUT_STATE joyState;
+
+	// ジョイスティック状態取得
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		spritePosition.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 5.0f;
+		spritePosition.y -= (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 5.0f;
+
+		sprite2DReticle_->SetPosition(spritePosition);
+	}
+
+	Matrix4x4 matViewport =
+	    Matrix4x4::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+	Matrix4x4 matVPV = viewProjection.matView * viewProjection.matProjection * matViewport;
+
+	Matrix4x4 matInverseVPV = Matrix4x4::Inverse(matVPV);
+
+	Vector3 posNear =
+	    Vector3(static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 0);
+	Vector3 posFar =
+	    Vector3(static_cast<float>(spritePosition.x), static_cast<float>(spritePosition.y), 1);
+
+
+	/*POINT mousePosition;
 
 	GetCursorPos(&mousePosition);
 
@@ -99,7 +147,7 @@ void Player::ReticleUpdate(ViewProjection& viewProjection) {
 	Vector3 posNear =
 	    Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 0);
 	Vector3 posFar =
-	    Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1);
+	    Vector3(static_cast<float>(mousePosition.x), static_cast<float>(mousePosition.y), 1);*/
 
 	posNear = Matrix4x4::Transform(posNear, matInverseVPV);
 	posFar = Matrix4x4::Transform(posFar, matInverseVPV);
@@ -155,11 +203,20 @@ void Player::Update( ViewProjection& viewProjection) {
 
 	Rotate();
 
+	// ゲームパッドの取得情報を得る関数
+	XINPUT_STATE joyState;
+
 	Vector3 move = {0, 0, 0};
 
 	const float kCharacterSpeed = 0.2f;
 
-	if (input_->PushKey(DIK_LEFT)) {
+	//ジョイスティック状態取得
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		move.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * kCharacterSpeed;
+		move.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * kCharacterSpeed;
+	}
+
+	/*if (input_->PushKey(DIK_LEFT)) {
 		move.x -= kCharacterSpeed;
 	}
 	if (input_->PushKey(DIK_RIGHT)) {
@@ -170,7 +227,7 @@ void Player::Update( ViewProjection& viewProjection) {
 	}
 	if (input_->PushKey(DIK_DOWN)) {
 		move.y -= kCharacterSpeed;
-	}
+	}*/
 
 	worldTransform_.translation_ += move;
 

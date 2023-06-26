@@ -61,6 +61,8 @@ private:
 
 	void LeavePhaseUpdate(const float& moveSpeed);
 
+	static void (Enemy::*spPhaseUpdateFuncTable[])(const float& moveSpeed);
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;

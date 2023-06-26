@@ -36,9 +36,9 @@ void Enemy::ApproachPhaseUpdate(const float& moveSpeed) {
 
 	worldTransform_.translation_ += velocity;
 
-	/*if (worldTransform_.translation_.z < 0.0f) {
+	if (worldTransform_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;
-	}*/
+	}
 }
 
 void Enemy::LeavePhaseUpdate(const float& moveSpeed) {
@@ -47,6 +47,11 @@ void Enemy::LeavePhaseUpdate(const float& moveSpeed) {
 	worldTransform_.translation_ += velocity;
 
 }
+
+void (Enemy::*Enemy::spPhaseUpdateFuncTable[])(const float& moveSpeed){
+	&Enemy::ApproachPhaseUpdate,
+	&Enemy::LeavePhaseUpdate
+};
 
 void Enemy::Fire() {
 	assert(player_);
@@ -90,7 +95,9 @@ void Enemy::Update() {
 		break;
 	}*/
 
-	ApproachPhaseUpdate(kMoveSpeed);
+	//ApproachPhaseUpdate(kMoveSpeed);
+
+	(this->*spPhaseUpdateFuncTable[static_cast<size_t>(phase_)])(kMoveSpeed);
 
 	fireTimer--;
 	if (fireTimer == 0) {

@@ -9,11 +9,18 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.Initialize();
 }
 
+void Player::Initialize(Model* model) {
+	assert(model);
+	model_ = model;
+
+	worldTransform_.Initialize();
+}
+
 void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
 }
 
 void Player::Draw(ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+	model_->Draw(worldTransform_, viewProjection);
 }

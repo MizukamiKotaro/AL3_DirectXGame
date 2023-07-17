@@ -52,12 +52,6 @@
     <Filter Include="ソース ファイル\2d">
       <UniqueIdentifier>{814a0f6d-f847-4c45-856d-4688fa4c9e6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Player">
-      <UniqueIdentifier>{bc0acebd-a0f5-479f-b7ee-cb1faf636a24}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ソリューション項目">
-      <UniqueIdentifier>{292c2e4f-cbcf-4601-ad85-7786b26d61f5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -75,8 +69,14 @@
     <ClCompile Include="2d\ImGuiManager.cpp">
       <Filter>ソース ファイル\2d</Filter>
     </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>Player</Filter>
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Skydome.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Matrix3x3.cpp">
       <Filter>ソース ファイル\math</Filter>
@@ -173,8 +173,14 @@
     <ClInclude Include="base\StringUtility.h">
       <Filter>ヘッダー ファイル\base</Filter>
     </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Player</Filter>
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Skydome.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Matrix3x3.h">
       <Filter>ヘッダー ファイル\math</Filter>
@@ -227,9 +233,6 @@
     </None>
     <None Include="Resources\shaders\Terrain.hlsli">
       <Filter>シェーダー ファイル</Filter>
-    </None>
-    <None Include=".editorconfig">
-      <Filter>ソリューション項目</Filter>
     </None>
   </ItemGroup>
 </Project>

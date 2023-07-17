@@ -12,6 +12,8 @@ public:
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
 
+	void Initialize(Model* model);
+
 	/// <summary>
 	/// 更新
 	/// </summary>

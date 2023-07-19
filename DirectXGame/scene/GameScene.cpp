@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include "AxisIndicator.h"
 
 GameScene::GameScene() {}
 
@@ -35,6 +36,12 @@ void GameScene::Initialize() {
 	modelGround_.reset(Model::CreateFromOBJ("ground", true));
 	ground_ = std::make_unique<Ground>();
 	ground_->Initialize(modelGround_.get());
+
+#ifdef _DEBUG
+	AxisIndicator::GetInstance()->SetVisible(true);
+
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+#endif // _DEBUG
 }
 
 void GameScene::Update() {
@@ -50,13 +57,14 @@ void GameScene::Update() {
 		}
 	}
 #endif // _DEBUG
-	/*if (isDebugCameraActive_) {
+	if (isDebugCameraActive_) {
 		debugCamera_->Update();
-		ViewProjection tmp = debugCamera_->GetViewProjection();
+		//コンスト参照
+		const ViewProjection &tmp = debugCamera_->GetViewProjection();
 		viewProjection_.matView = tmp.matView;
 		viewProjection_.matProjection = tmp.matProjection;
 		viewProjection_.TransferMatrix();
-	}*/
+	}
 }
 
 void GameScene::Draw() {

@@ -1,26 +1,62 @@
 #include "Player.h"
 #include <cassert>
 
-void Player::Initialize(Model* model, uint32_t textureHandle) {
-	assert(model);
-	model_ = model;
-	textureHandle_ = textureHandle;
+void Player::Initialize(Model* modelBody, Model* modelHead, Model* modelL_arm, Model* modelR_arm) {
+	assert(modelBody);
+	assert(modelHead);
+	assert(modelL_arm);
+	assert(modelR_arm);
 
-	worldTransform_.Initialize();
+	modelBody_ = modelBody;
+	modelHead_ = modelHead;
+	modelL_arm_ = modelL_arm;
+	modelR_arm_ = modelR_arm;
+
+	worldTransformBase_.Initialize();
+	worldTransformBody_.Initialize();
+	worldTransformBody_.translation_.y = 6.0f;
+	worldTransformBody_.parent_ = &worldTransformBase_;
+	worldTransformHead_.Initialize();
+	worldTransformHead_.translation_.y = 3.0f;
+	worldTransformHead_.parent_ = &worldTransformBody_;
+	worldTransformL_arm_.Initialize();
+	worldTransformL_arm_.translation_ = {1.0f, 2.5f, 0.0f};
+	worldTransformL_arm_.parent_ = &worldTransformBody_;
+	worldTransformR_arm_.Initialize();
+	worldTransformR_arm_.translation_ = {-1.0f, 2.5f, 0.0f};
+	worldTransformR_arm_.parent_ = &worldTransformBody_;
+
+	InitializeFloatingGimmick();
+
 }
 
-void Player::Initialize(Model* model, const Vector3& translate) {
-	assert(model);
-	model_ = model;
+void Player::InitializeFloatingGimmick() { floatingParameter_ = 0.0f; }
 
-	worldTransform_.Initialize();
-	worldTransform_.translation_ = translate;
+void Player::UpdateFloatingGimmick() {
 
-	// シングルインスタンスを取得
-	input_ = Input::GetInstance();
+	const uint16_t cycle = 100;
+
+	const float pi = 3.14f;
+
+	const float step = 2.0f * pi / cycle;
+
+	floatingParameter_ += step;
+
+	floatingParameter_ = std::fmod(floatingParameter_, 2.0f * pi);
+	//浮遊の振幅
+	const float amplitude = 0.5f;
+
+	worldTransformBody_.translation_.y = std::sin(floatingParameter_) * amplitude;
+
+	const float angle = pi / 6;
+
+	worldTransformL_arm_.rotation_.z = std::sin(floatingParameter_) * angle;
+	worldTransformR_arm_.rotation_.z = std::sin(floatingParameter_) * angle;
 }
 
 void Player::Update() {
+
+	UpdateFloatingGimmick();
 
 	// ゲームパッドの取得情報を得る関数
 	XINPUT_STATE joyState;
@@ -38,19 +74,25 @@ void Player::Update() {
 
 		move = move * Matrix4x4::MakeRotateXYZMatrix(viewProjection_->rotation_);
 
-		worldTransform_.translation_ += move;
+		worldTransformBase_.translation_ += move;
 
 		if (move.x == 0 && move.z == 0) {
 			//worldTransform_.rotation_.y = viewProjection_->rotation_.y;
 		} else {
-			worldTransform_.rotation_.y = atan2(move.x, move.z);
+			worldTransformBase_.rotation_.y = atan2(move.x, move.z);
 		}
 	}
 
-	worldTransform_.UpdateMatrix();
-	
+	worldTransformBase_.UpdateMatrix();
+	worldTransformBody_.UpdateMatrix();
+	worldTransformHead_.UpdateMatrix();
+	worldTransformL_arm_.UpdateMatrix();
+	worldTransformR_arm_.UpdateMatrix();
 }
 
 void Player::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransform_, viewProjection);
+	modelBody_->Draw(worldTransformBody_, viewProjection);
+	modelHead_->Draw(worldTransformHead_, viewProjection);
+	modelL_arm_->Draw(worldTransformL_arm_, viewProjection);
+	modelR_arm_->Draw(worldTransformR_arm_, viewProjection);
 }

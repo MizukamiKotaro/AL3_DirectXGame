@@ -21,13 +21,18 @@ void GameScene::Initialize() {
 	viewProjection_.translation_.y = 2.0f;
 	viewProjection_.UpdateMatrix();
 
-	modelPlayer_.reset(Model::CreateFromOBJ("player", true));
+	modelFighterBody_.reset(Model::CreateFromOBJ("float_Body", true));
+	modelFighterHead_.reset(Model::CreateFromOBJ("float_Head", true));
+	modelFighterL_arm_.reset(Model::CreateFromOBJ("float_L_Arm", true));
+	modelFighterR_arm_.reset(Model::CreateFromOBJ("float_R_Arm", true));
 
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
 	Vector3 translate = {0.0f, 2.0f, 0.0f};
-	player_->Initialize(modelPlayer_.get(), translate);
+	player_->Initialize(
+	    modelFighterBody_.get(), modelFighterHead_.get(), modelFighterL_arm_.get(),
+	    modelFighterR_arm_.get());
 
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();

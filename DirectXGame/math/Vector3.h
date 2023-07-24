@@ -1,29 +1,15 @@
 #pragma once
-
-/// <summary>
-/// 3次元ベクトル
-/// </summary>
-class Vector3 {
+struct Vector3 {
 public:
-	/*Vector3() {
-		x = 0;
-		y = 0;
-		z = 0;
+	bool operator==(const Vector3& obj) {
+		if (x == obj.x && y == obj.y && z == obj.z) {
+			return true;
+		}
+		return false;
 	}
-	Vector3(float x, float y, float z) {
-		this->x = x;
-		this->y = y;
-		this->z = z;
-	}
-
-	Vector3(const Vector3& obj) {
-		x = obj.x;
-		y = obj.y;
-		z = obj.z;
-	}*/
 
 	// 変換
-	Vector3 operator=(Vector3 obj) {
+	Vector3& operator=(const Vector3& obj) {
 		x = obj.x;
 		y = obj.y;
 		z = obj.z;
@@ -31,13 +17,6 @@ public:
 	}
 
 	// 加算
-	Vector3 operator+(Vector3 obj) {
-		Vector3 tmp;
-		tmp.x = this->x + obj.x;
-		tmp.y = this->y + obj.y;
-		tmp.z = this->z + obj.z;
-		return tmp;
-	}
 	void operator+=(Vector3 obj) {
 		this->x = this->x + obj.x;
 		this->y = this->y + obj.y;
@@ -45,13 +24,6 @@ public:
 	}
 
 	// 減算
-	Vector3 operator-(Vector3 obj) {
-		Vector3 tmp;
-		tmp.x = this->x - obj.x;
-		tmp.y = this->y - obj.y;
-		tmp.z = this->z - obj.z;
-		return tmp;
-	}
 	void operator-=(Vector3 obj) {
 		this->x -= obj.x;
 		this->y -= obj.y;
@@ -61,14 +33,6 @@ public:
 	// スカラー
 
 	// 乗算
-	Vector3 operator*(float a) {
-		Vector3 tmp;
-
-		tmp.x = this->x * a;
-		tmp.y = this->y * a;
-		tmp.z = this->z * a;
-		return tmp;
-	}
 	void operator*=(float a) {
 		this->x *= a;
 		this->y *= a;
@@ -76,19 +40,17 @@ public:
 	}
 
 	// 除算
-	Vector3 operator/(float a) {
-		Vector3 tmp;
-
-		tmp.x = this->x / a;
-		tmp.y = this->y / a;
-		tmp.z = this->z / a;
-		return tmp;
-	}
 	void operator/=(float a) {
 		this->x /= a;
 		this->y /= a;
 		this->z /= a;
 	}
+
+	float Length();
+
+	float Length(const Vector3& pos);
+
+	Vector3 Normalize();
 
 public:
 	float x;
@@ -96,5 +58,20 @@ public:
 	float z;
 };
 
+Vector3 operator+(const Vector3& obj1, const Vector3& obj2);
 
+// 減算
+Vector3 operator-(const Vector3& obj1, const Vector3& obj2);
 
+// スカラー
+// 乗算
+Vector3 operator*(float a, const Vector3& obj);
+
+Vector3 operator*(const Vector3& obj, float a);
+
+// 除算
+Vector3 operator/(const Vector3& obj, float a);
+
+Vector3 operator+(const Vector3& obj);
+
+Vector3 operator-(const Vector3& obj);

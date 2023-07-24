@@ -13,6 +13,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <memory>
+#include "FollowCamera.h"
 
 /// <summary>
 /// ゲームシーン
@@ -60,6 +61,8 @@ private: // メンバ変数
 	std::unique_ptr<Model> modelPlayer_;
 
 	std::unique_ptr<Player> player_;
+
+	std::unique_ptr<FollowCamera> followCamera_;
 
 	bool isDebugCameraActive_ = false;
 

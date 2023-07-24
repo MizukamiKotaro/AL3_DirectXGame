@@ -1,12 +1,9 @@
 #pragma once
 #include "Vector3.h"
 
-class Matrix4x4 {
+struct Matrix4x4 {
 public:
-	Matrix4x4 operator*(Matrix4x4 a) { 
-		Matrix4x4 result = Multiply(*this, a);
-		return result;
-	}
+	enum RotateType { kXYZ, kYXZ, kZXY, kXZY, kYZX, kZYX };
 
 public:
 	static Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
@@ -20,6 +17,8 @@ public:
 	static Vector3 Multiply(const Vector3& vector, const Matrix4x4& m);
 
 	static Matrix4x4 Inverse(const Matrix4x4& m);
+
+	Matrix4x4 Inverse();
 
 	// 転置行列
 	static Matrix4x4 Transpose(const Matrix4x4& m);
@@ -41,9 +40,14 @@ public:
 
 	static Matrix4x4 MakeRotateXYZMatrix(const Vector3& rotate);
 
-	static Matrix4x4 MakeAffinMatrix(
-	    const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+	static Matrix4x4 MakeRotateMatrix(const Vector3& rotate, RotateType rotateOrder);
 
+	static Matrix4x4
+	    MakeAffinMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+
+	static Matrix4x4 MakeAffinMatrix(
+	    const Vector3& scale, const Vector3& rotate, const Vector3& translate,
+	    RotateType rotateOrder);
 	// 透視投影行列
 	static Matrix4x4
 	    MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
@@ -54,7 +58,20 @@ public:
 	static Matrix4x4 MakeViewportMatrix(
 	    float left, float top, float width, float height, float minDepth, float maxDepth);
 
-
 public:
 	float m[4][4];
 };
+
+Matrix4x4 operator+(const Matrix4x4 m1, const Matrix4x4& m2);
+
+Matrix4x4 operator-(const Matrix4x4 m1, const Matrix4x4& m2);
+
+Matrix4x4 operator*(const Matrix4x4 m1, const Matrix4x4& m2);
+
+Matrix4x4 operator*(float s, const Matrix4x4& m);
+
+Matrix4x4 operator*(const Matrix4x4& m, float s);
+
+Vector3 operator*(const Vector3& v, const Matrix4x4& m);
+
+Vector3 operator*(const Matrix4x4& m, const Vector3& v);

@@ -18,13 +18,22 @@ void GameScene::Initialize() {
 	// model_.reset(Model::Create());
 
 	viewProjection_.Initialize();
+	viewProjection_.translation_.y = 2.0f;
+	viewProjection_.UpdateMatrix();
 
 	modelPlayer_.reset(Model::CreateFromOBJ("player", true));
 
 	// 自キャラの生成
 	player_ = std::make_unique<Player>();
 	// 自キャラの初期化
-	player_->Initialize(modelPlayer_.get());
+	Vector3 translate = {0.0f, 2.0f, 0.0f};
+	player_->Initialize(modelPlayer_.get(), translate);
+
+	followCamera_ = std::make_unique<FollowCamera>();
+	followCamera_->Initialize();
+	followCamera_->SetTarget(&player_->GetWorldTransform());
+
+	player_->SetViewProjection(&followCamera_->GetViewProjection());
 
 	// debugCamera_ = std::make_unique<DebugCamera>();
 	debugCamera_.reset(new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight));
@@ -40,14 +49,15 @@ void GameScene::Initialize() {
 #ifdef _DEBUG
 	AxisIndicator::GetInstance()->SetVisible(true);
 
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&followCamera_->GetViewProjection());
 #endif // _DEBUG
 }
 
 void GameScene::Update() {
 	player_->Update();
 
-	debugCamera_->Update();
+	followCamera_->Update();
+
 #ifdef _DEBUG
 	if (input_->TriggerKey(DIK_LSHIFT)) {
 		if (isDebugCameraActive_) {
@@ -61,6 +71,12 @@ void GameScene::Update() {
 		debugCamera_->Update();
 		//コンスト参照
 		const ViewProjection &tmp = debugCamera_->GetViewProjection();
+		viewProjection_.matView = tmp.matView;
+		viewProjection_.matProjection = tmp.matProjection;
+		viewProjection_.TransferMatrix();
+	} 
+	else { // 追従かめら
+		const ViewProjection& tmp = followCamera_->GetViewProjection();
 		viewProjection_.matView = tmp.matView;
 		viewProjection_.matProjection = tmp.matProjection;
 		viewProjection_.TransferMatrix();

@@ -4,6 +4,7 @@
 #include "WorldTransform.h"
 #include "Input.h"
 #include "BaseCharacter.h"
+#include <optional>
 
 class Player : public BaseCharacter {
 public:
@@ -35,6 +36,49 @@ private:
 
 	void UpdateFloatingGimmick();
 
+	void BehaviorRootInitialize();
+
+	void BehaviorRootUpdate();
+
+	void BehaviorAttackInitialize();
+
+	void BehaviorAttackUpdate();
+
+	void AttackBehaviorExtraInitialize();
+
+	void AttackBehaviorExtra2Initialize();
+
+	void AttackBehaviorAttackInitialize();
+
+	void AttackBehaviorRigorInitialize();
+
+	void AttackBehaviorReturnInitialize();
+
+	void AttackBehaviorExtraUpdate();
+
+	void AttackBehaviorExtra2Update();
+
+	void AttackBehaviorAttackUpdate();
+
+	void AttackBehaviorRigorUpdate();
+
+	void AttackBehaviorReturnUpdate();
+
+	enum class Behavior {
+		kRoot, // 通常状態
+		kAttack, // 攻撃中
+	};
+
+	enum class BehaviorAttack {
+		kExtra, // 予備動作
+		kExtra2,  // 予備動作2
+		kAttack, // 攻撃
+		kRigor, // 硬直
+		kReturn, // 姿勢を戻す
+	};
+
+	void EaseVectorClear();
+
 private:
 	// ワールド変換データ
 	//WorldTransform worldTransformBase_;
@@ -42,13 +86,42 @@ private:
 		kModelIndexBody,
 		kModelIndexHead,
 		kModelIndexL_arm,
-		kModelIndexR_arm
+		kModelIndexR_arm,
+		kModelIndexWeapon,
 	};
 
 	WorldTransform worldTransformBody_;
 	WorldTransform worldTransformHead_;
 	WorldTransform worldTransformL_arm_;
 	WorldTransform worldTransformR_arm_;
+
+	WorldTransform worldTransformWeapon_;
+
+	// 振る舞い
+	Behavior behavior_ = Behavior::kRoot;
+	BehaviorAttack behaviorAttack_ = BehaviorAttack::kExtra;
+
+	// 次の振る舞いリクエスト
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
+
+	// 次の振る舞いリクエスト
+	std::optional<BehaviorAttack> behaviorAttackRequest_ = std::nullopt;
+
+	// イージング用
+	std::vector<Vector3> easeStartPos_;
+	std::vector<Vector3> easeEndPos_;
+	std::vector<Vector3> easeStartRot_;
+	std::vector<Vector3> easeEndRot_;
+	int count_ = 0;
+
+	enum EaseNum {
+		kBody,
+		kLArm,
+		kRArm,
+		kWeapon
+	};
+
+
 
 	// モデル
 	/*Model* modelBody_ = nullptr;

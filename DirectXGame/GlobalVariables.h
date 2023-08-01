@@ -9,7 +9,13 @@ public:
 	
 	static GlobalVariables* GetInstance();
 
+	void Update();
+
 	void CreateGroup(const std::string& groupName);
+
+	void SetValue(const std::string& groupName, const std::string& key, int32_t value);
+	void SetValue(const std::string& groupName, const std::string& key, float value);
+	void SetValue(const std::string& groupName, const std::string& key, Vector3 value);
 
 private:
 	GlobalVariables() = default;

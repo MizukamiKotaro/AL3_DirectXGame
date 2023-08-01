@@ -3,6 +3,7 @@
 #include "Ease.h"
 #include "GlobalVariables.h"
 
+
 void Player::Initialize(const std::vector<Model*>& models) {
 	
 	BaseCharacter::Initialize(models);
@@ -26,9 +27,17 @@ void Player::Initialize(const std::vector<Model*>& models) {
 	InitializeFloatingGimmick();
 
 	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
-	globalVariables->GetInstance();
 	const char* groupName = "Player";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
+
+	globalVariables->SetValue(groupName, "Test", 90);
+
+	float testf = 0.5f;
+	Vector3 testv = {1.0f, 0.0f, 3.3f};
+
+	globalVariables->SetValue(groupName, "TestFloat", testf);
+	globalVariables->SetValue(groupName, "TestVector3", testv);
+
 }
 
 void Player::InitializeFloatingGimmick() { floatingParameter_ = 0.0f; }

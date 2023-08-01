@@ -1,5 +1,6 @@
 #include "GlobalVariables.h"
 #include "ImGuiManager.h"
+#include <json.hpp>
 
 GlobalVariables* GlobalVariables::GetInstance() {
 	static GlobalVariables globalVariables;
@@ -87,4 +88,55 @@ void GlobalVariables::SetValue(const std::string& groupName, const std::string& 
 	newItem.value = value;
 
 	group.items[key] = newItem;
+}
+
+void GlobalVariables::SaveFile(const std::string& groupName) {
+
+
+	std::map<std::string, Group>::iterator itGroup = datas_.find(groupName);
+
+	assert(itGroup != datas_.end());
+
+	nlohmann::json root;
+
+	root = nlohmann::json::object();
+	
+	
+	root[groupName] = nlohmann::json::object();
+
+
+	for (std::map<std::string, Item>::iterator itItem = itGroup->second.items.begin();
+	     itItem != itGroup->second.items.end(); ++itItem) {
+		
+		const std::string& itemName = itItem->first;
+
+		Item& item = itItem->second;
+
+
+		if (std::holds_alternative<int32_t>(item.value)) {
+			
+			
+			root[groupName][itemName] = std::get<int32_t>(item.value);
+		} else if (std::holds_alternative<float>(item.value)) {
+
+			root[groupName][itemName] = std::get<float>(item.value);
+		} else if (std::holds_alternative<Vector3>(item.value)) {
+
+			Vector3 value = std::get<Vector3>(item.value);
+			root[groupName][itemName] = nlohmann::json::array({value.x, value.y, value.z});
+		}
+
+	}
+
+	std::filesystem::path dir(kDirectoryPath);
+	if (!std::filesystem::exists(dir)) {
+		std::filesystem::create_directories(dir);
+	}
+
+
+	std::string filePath = kDirectoryPath + groupName + ".json";
+
+	std::ofstream ofs;
+
+	ofs.open(filePath);
 }

@@ -17,6 +17,8 @@ public:
 	void SetValue(const std::string& groupName, const std::string& key, float value);
 	void SetValue(const std::string& groupName, const std::string& key, Vector3 value);
 
+	void SaveFile(const std::string& groupName);
+
 private:
 	GlobalVariables() = default;
 	~GlobalVariables() = default;
@@ -33,5 +35,7 @@ private:
 	};
 
 	std::map<std::string, Group> datas_;
+
+	const std::string kDirectoryPath = "Resources/GlobalVariables/"
 };
 

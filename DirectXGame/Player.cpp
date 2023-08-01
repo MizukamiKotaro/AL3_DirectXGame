@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <cassert>
 #include "Ease.h"
+#include "GlobalVariables.h"
 
 void Player::Initialize(const std::vector<Model*>& models) {
 	
@@ -23,7 +24,11 @@ void Player::Initialize(const std::vector<Model*>& models) {
 	worldTransformWeapon_.parent_ = &worldTransformHead_;
 
 	InitializeFloatingGimmick();
-	
+
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	globalVariables->GetInstance();
+	const char* groupName = "Player";
+	GlobalVariables::GetInstance()->CreateGroup(groupName);
 }
 
 void Player::InitializeFloatingGimmick() { floatingParameter_ = 0.0f; }

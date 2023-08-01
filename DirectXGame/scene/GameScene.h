@@ -14,6 +14,7 @@
 #include "WorldTransform.h"
 #include <memory>
 #include "FollowCamera.h"
+#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -66,6 +67,11 @@ private: // メンバ変数
 	std::unique_ptr<Player> player_;
 
 	std::unique_ptr<FollowCamera> followCamera_;
+
+	std::unique_ptr<Model> modelEnemyBody_;
+	std::unique_ptr<Model> modelEnemyUpJoint_;
+
+	std::unique_ptr<Enemy> enemy_;
 
 	bool isDebugCameraActive_ = false;
 

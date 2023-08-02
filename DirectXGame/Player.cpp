@@ -40,7 +40,7 @@ void Player::Initialize(const std::vector<Model*>& models) {
 
 	globalVariables->AddItem(groupName, "Head Translation", worldTransformHead_.translation_);
 
-	ApplyGlobalVariable();
+	
 }
 
 void Player::ApplyGlobalVariable() {
@@ -344,6 +344,8 @@ void Player::BehaviorAttackUpdate() {
 }
 
 void Player::Update() {
+
+	ApplyGlobalVariable();
 
 	if (behaviorRequest_) {
 		// 振る舞いを変更する

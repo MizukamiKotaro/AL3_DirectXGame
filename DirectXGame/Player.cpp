@@ -99,6 +99,10 @@ void Player::BehaviorRootUpdate() {
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_B) {
+		GlobalVariables::GetInstance()->SaveFile("Player");
+	}
 }
 
 void Player::BehaviorAttackInitialize() { behaviorAttackRequest_ = BehaviorAttack::kExtra; }

@@ -48,7 +48,15 @@ void GlobalVariables::Update() {
 				Vector3* ptr = std::get_if<Vector3>(&item.value);
 				ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
 			}
+		}
 
+
+		ImGui::Text("\n");
+
+		if (ImGui::Button("Save")) {
+			SaveFile(groupName);
+			std::string message = std::format("{}.json saved", groupName);
+			MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
 		}
 
 		ImGui::EndMenu();
@@ -142,6 +150,13 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 	ofs.open(filePath);
 
 	if (ofs.fail()) {
-		
+		std::string message = "Failed open data file file for write";
+		MessageBoxA(nullptr, message.c_str(), "GlobalVariables", 0);
+		assert(0);
+		return;
 	}
+
+	ofs << std::setw(4) << root << std::endl;
+
+	ofs.close();
 }

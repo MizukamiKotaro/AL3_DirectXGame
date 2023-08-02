@@ -38,13 +38,11 @@ private:
 	GlobalVariables& operator=(const GlobalVariables& obj) = delete;
 
 private:
-	struct Item {
-		std::variant<int32_t, float, Vector3> value;
-	};
 
-	struct Group {
-		std::map<std::string, Item> items;
-	};
+
+	using Item = std::variant<int32_t, float, Vector3>;
+
+	using Group = std::map<std::string, Item>;
 
 	std::map<std::string, Group> datas_;
 

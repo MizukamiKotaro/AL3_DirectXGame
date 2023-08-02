@@ -30,22 +30,22 @@ void GlobalVariables::Update() {
 			continue;
 		}
 		
-		for (std::map<std::string, Item>::iterator itItem = group.items.begin();
-		     itItem != group.items.end(); ++itItem) {
+		for (std::map<std::string, Item>::iterator itItem = group.begin();
+		     itItem != group.end(); ++itItem) {
 			
 			const std::string& itemName = itItem->first;
 
 			Item& item = itItem->second;
 
 
-			if (std::holds_alternative<int32_t>(item.value)) {
-				int32_t* ptr = std::get_if<int32_t>(&item.value);
+			if (std::holds_alternative<int32_t>(item)) {
+				int32_t* ptr = std::get_if<int32_t>(&item);
 				ImGui::SliderInt(itemName.c_str(), ptr, 0, 100);
-			} else if (std::holds_alternative<float>(item.value)) {
-				float* ptr = std::get_if<float>(&item.value);
+			} else if (std::holds_alternative<float>(item)) {
+				float* ptr = std::get_if<float>(&item);
 				ImGui::SliderFloat(itemName.c_str(), ptr, -10.0f, 10.0f);
-			} else if (std::holds_alternative<Vector3>(item.value)) {
-				Vector3* ptr = std::get_if<Vector3>(&item.value);
+			} else if (std::holds_alternative<Vector3>(item)) {
+				Vector3* ptr = std::get_if<Vector3>(&item);
 				ImGui::SliderFloat3(itemName.c_str(), reinterpret_cast<float*>(ptr), -10.0f, 10.0f);
 			}
 		}
@@ -76,27 +76,27 @@ void GlobalVariables::SetValue(const std::string& groupName, const std::string& 
 	Group& group = datas_[groupName];
 
 	Item newItem{};
-	newItem.value = value;
+	newItem = value;
 
-	group.items[key] = newItem;
+	group[key] = newItem;
 }
 
 void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, float value) {
 	Group& group = datas_[groupName];
 
 	Item newItem{};
-	newItem.value = value;
+	newItem = value;
 
-	group.items[key] = newItem;
+	group[key] = newItem;
 }
 
 void GlobalVariables::SetValue(const std::string& groupName, const std::string& key, Vector3 value) {
 	Group& group = datas_[groupName];
 
 	Item newItem{};
-	newItem.value = value;
+	newItem = value;
 
-	group.items[key] = newItem;
+	group[key] = newItem;
 }
 
 void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, int32_t value) {
@@ -105,7 +105,7 @@ void GlobalVariables::AddItem(const std::string& groupName, const std::string& k
 
 	Group& group = itGroup->second;
 
-	if (group.items.find(key) == group.items.end()) {
+	if (group.find(key) == group.end()) {
 		SetValue(groupName, key, value);
 	}
 
@@ -128,7 +128,7 @@ void GlobalVariables::AddItem(const std::string& groupName, const std::string& k
 
 	Group& group = itGroup->second;
 
-	if (group.items.find(key) == group.items.end()) {
+	if (group.find(key) == group.end()) {
 		SetValue(groupName, key, value);
 	}
 }
@@ -138,7 +138,7 @@ void GlobalVariables::AddItem(const std::string& groupName, const std::string& k
 
 	Group& group = itGroup->second;
 
-	if (group.items.find(key) == group.items.end()) {
+	if (group.find(key) == group.end()) {
 		SetValue(groupName, key, value);
 	}
 }
@@ -149,9 +149,9 @@ int32_t GlobalVariables::GetIntValue(const std::string& groupName, const std::st
 
 	const Group& group = datas_.at(groupName);
 
-	assert(group.items.find(key) != group.items.end());
+	assert(group.find(key) != group.end());
 
-	return std::get<int32_t>(group.items.find(key)->second.value);
+	return std::get<int32_t>(group.find(key)->second);
 }
 
 float GlobalVariables::GetFloatValue(const std::string& groupName, const std::string& key) const {
@@ -160,9 +160,9 @@ float GlobalVariables::GetFloatValue(const std::string& groupName, const std::st
 
 	const Group& group = datas_.at(groupName);
 
-	assert(group.items.find(key) != group.items.end());
+	assert(group.find(key) != group.end());
 
-	return std::get<float>(group.items.find(key)->second.value);
+	return std::get<float>(group.find(key)->second);
 }
 
 Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std::string& key) const {
@@ -171,9 +171,9 @@ Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std
 
 	const Group& group = datas_.at(groupName);
 
-	assert(group.items.find(key) != group.items.end());
+	assert(group.find(key) != group.end());
 
-	return std::get<Vector3>(group.items.find(key)->second.value);
+	return std::get<Vector3>(group.find(key)->second);
 }
 
 void GlobalVariables::SaveFile(const std::string& groupName) {
@@ -191,24 +191,24 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 	root[groupName] = nlohmann::json::object();
 
 
-	for (std::map<std::string, Item>::iterator itItem = itGroup->second.items.begin();
-	     itItem != itGroup->second.items.end(); ++itItem) {
+	for (std::map<std::string, Item>::iterator itItem = itGroup->second.begin();
+	     itItem != itGroup->second.end(); ++itItem) {
 		
 		const std::string& itemName = itItem->first;
 
 		Item& item = itItem->second;
 
 
-		if (std::holds_alternative<int32_t>(item.value)) {
+		if (std::holds_alternative<int32_t>(item)) {
 			
 			
-			root[groupName][itemName] = std::get<int32_t>(item.value);
-		} else if (std::holds_alternative<float>(item.value)) {
+			root[groupName][itemName] = std::get<int32_t>(item);
+		} else if (std::holds_alternative<float>(item)) {
 
-			root[groupName][itemName] = std::get<float>(item.value);
-		} else if (std::holds_alternative<Vector3>(item.value)) {
+			root[groupName][itemName] = std::get<float>(item);
+		} else if (std::holds_alternative<Vector3>(item)) {
 
-			Vector3 value = std::get<Vector3>(item.value);
+			Vector3 value = std::get<Vector3>(item);
 			root[groupName][itemName] = nlohmann::json::array({value.x, value.y, value.z});
 		}
 

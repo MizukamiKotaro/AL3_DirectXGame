@@ -30,14 +30,36 @@ void Player::Initialize(const std::vector<Model*>& models) {
 	const char* groupName = "Player";
 	GlobalVariables::GetInstance()->CreateGroup(groupName);
 
-	globalVariables->SetValue(groupName, "Test", 90);
+	/*globalVariables->AddItem(groupName, "Test", 90);
 
 	float testf = 0.5f;
 	Vector3 testv = {1.0f, 0.0f, 3.3f};
 
-	globalVariables->SetValue(groupName, "TestFloat", testf);
-	globalVariables->SetValue(groupName, "TestVector3", testv);
+	globalVariables->AddItem(groupName, "TestFloat", testf);
+	globalVariables->AddItem(groupName, "TestVector3", testv);*/
 
+	globalVariables->AddItem(groupName, "Head Translation", worldTransformHead_.translation_);
+
+	ApplyGlobalVariable();
+}
+
+void Player::ApplyGlobalVariable() {
+
+
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+
+	/*globalVariables->AddItem(groupName, "Test", 90);
+
+	float testf = 0.5f;
+	Vector3 testv = {1.0f, 0.0f, 3.3f};
+
+	globalVariables->AddItem(groupName, "TestFloat", testf);
+	globalVariables->AddItem(groupName, "TestVector3", testv);*/
+
+	worldTransformHead_.translation_ = globalVariables->GetVector3Value(groupName, "Head Translation");
+
+	
 }
 
 void Player::InitializeFloatingGimmick() { floatingParameter_ = 0.0f; }

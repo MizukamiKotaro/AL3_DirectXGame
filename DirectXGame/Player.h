@@ -30,6 +30,8 @@ public:
 		viewProjection_ = viewProjection;
 	}
 
+	void ApplyGlobalVariable();
+
 private:
 
 	void InitializeFloatingGimmick();

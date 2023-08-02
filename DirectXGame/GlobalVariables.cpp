@@ -1,6 +1,7 @@
 #include "GlobalVariables.h"
 #include "ImGuiManager.h"
 #include <json.hpp>
+#include <fstream>
 
 GlobalVariables* GlobalVariables::GetInstance() {
 	static GlobalVariables globalVariables;
@@ -139,4 +140,8 @@ void GlobalVariables::SaveFile(const std::string& groupName) {
 	std::ofstream ofs;
 
 	ofs.open(filePath);
+
+	if (ofs.fail()) {
+		
+	}
 }

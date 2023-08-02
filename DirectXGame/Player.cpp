@@ -96,7 +96,7 @@ void Player::BehaviorRootUpdate() {
 		}
 	}
 
-	if (joyState.Gamepad.wButtons && XINPUT_GAMEPAD_A) {
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
 		behaviorRequest_ = Behavior::kAttack;
 	}
 }
